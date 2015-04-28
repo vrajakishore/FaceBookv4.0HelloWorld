@@ -8,7 +8,7 @@ android {
         mavenCentral()
     }
     defaultConfig {
-        applicationId "vivz.slidenerd.facebookv40helloworld"
+        applicationId "com.freecourier.mv"
         minSdkVersion 14
         targetSdkVersion 21
         versionCode 1

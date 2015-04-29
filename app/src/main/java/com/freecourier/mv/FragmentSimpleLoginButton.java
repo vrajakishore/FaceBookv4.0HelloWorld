@@ -31,6 +31,9 @@ public class FragmentSimpleLoginButton extends Fragment {
     private CallbackManager mCallbackManager;
     private AccessTokenTracker mTokenTracker;
     private ProfileTracker mProfileTracker;
+
+
+
     public FacebookCallback<LoginResult> mFacebookCallback = new FacebookCallback<LoginResult>() {
 
         public void send_to_menu(View view)

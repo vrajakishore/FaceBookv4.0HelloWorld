@@ -44,6 +44,9 @@
     <string name="title_activity_navigation_main">navigation_main</string>
 
     <string name="action_example">Example action</string>
+    <string name="send_fragment_title">SEND</string>
+    <string name="Send_submit">Submit</string>
+    <string name="carry_fragment_title">CARRY</string>
 
 
     <!--    <string name="com_facebook_loginview_log_in_button_long">Login</string>

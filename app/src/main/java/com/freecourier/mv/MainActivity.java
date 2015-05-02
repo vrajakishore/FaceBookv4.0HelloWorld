@@ -125,8 +125,8 @@ public class MainActivity extends ActionBarActivity {
             String responseStr = "";
             try {
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-                nameValuePairs.add(new BasicNameValuePair("email", args[0]));
-                nameValuePairs.add(new BasicNameValuePair("password", args[1]));
+                nameValuePairs.add(new BasicNameValuePair("email", "kishore"));
+                nameValuePairs.add(new BasicNameValuePair("password", "1234"));
                 request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 HttpResponse response = client.execute(request);
                 Log.d(TAG, "input = " + args[0]+" - "+args[1]);

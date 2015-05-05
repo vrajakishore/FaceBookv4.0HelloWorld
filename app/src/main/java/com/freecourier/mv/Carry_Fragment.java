@@ -17,10 +17,10 @@ public class Carry_Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.carrier_layout, container, false);
-        ExpandableListView elv = (ExpandableListView) rootview.findViewById(R.id.expandableListView);
-        ExpandableListView elv2 = (ExpandableListView) rootview.findViewById(R.id.expandableListView2);
-        elv.setAdapter(new SavedTabsListAdapter());
-        elv2.setAdapter(new SavedTabsListAdapter());
+        //ExpandableListView elv = (ExpandableListView) rootview.findViewById(R.id.expandableListView);
+       // ExpandableListView elv2 = (ExpandableListView) rootview.findViewById(R.id.expandableListView2);
+      //  elv.setAdapter(new SavedTabsListAdapter());
+      //  elv2.setAdapter(new SavedTabsListAdapter());
         return rootview;
     }
 

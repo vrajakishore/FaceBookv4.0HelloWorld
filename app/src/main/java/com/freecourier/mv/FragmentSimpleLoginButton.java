@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -36,12 +37,12 @@ public class FragmentSimpleLoginButton extends Fragment {
 
     public FacebookCallback<LoginResult> mFacebookCallback = new FacebookCallback<LoginResult>() {
 
-        public void send_to_menu(View view)
+      /*  public void send_to_menu(View view)
         {
             Intent intent = new Intent(getActivity(), Main_Navigation.class);
-            // Intent intent = new Intent(MainActivity.this, Signup_Page.class);
+            Toast.makeText(getActivity(), "Welcome user", Toast.LENGTH_LONG).show();
             startActivity(intent);
-        }
+        } */
 
         @Override
         public void onSuccess(LoginResult loginResult) {
@@ -143,12 +144,13 @@ public class FragmentSimpleLoginButton extends Fragment {
         mButtonLogin.registerCallback(mCallbackManager, mFacebookCallback);
     }
 
-    private String constructWelcomeMessage(Profile profile) {
+    public String constructWelcomeMessage(Profile profile) {
         StringBuffer stringBuffer = new StringBuffer();
         if (profile != null) {
             stringBuffer.append("Welcome " + profile.getName());
             Intent intent = new Intent(getActivity(), Main_Navigation.class);
             // Intent intent = new Intent(MainActivity.this, Signup_Page.class);
+            Toast.makeText(getActivity(), "Welcome "+profile.getName(), Toast.LENGTH_LONG).show();
             startActivity(intent);
 
         }

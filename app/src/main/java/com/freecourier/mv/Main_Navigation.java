@@ -67,6 +67,8 @@ public class Main_Navigation extends ActionBarActivity
                 break;
             case 6:
                 objFragment = new Logout();
+
+
                 break;
         }
         // update the main content by replacing fragments

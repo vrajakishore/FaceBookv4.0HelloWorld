@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -151,6 +152,7 @@ public class MainActivity extends ActionBarActivity {
                 if(message.equalsIgnoreCase("success")){
                     Intent intent = new Intent(MainActivity.this, Main_Navigation.class);
                     // Intent intent = new Intent(MainActivity.this, Signup_Page.class);
+                    Toast.makeText(MainActivity.this,"Welcome user",Toast.LENGTH_LONG).show();
                     startActivity(intent);
                 }
 

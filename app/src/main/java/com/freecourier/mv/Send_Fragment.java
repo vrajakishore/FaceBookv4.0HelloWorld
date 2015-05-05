@@ -1,7 +1,6 @@
 package com.freecourier.mv;
 
 import android.app.Fragment;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,16 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-
 import android.widget.Spinner;
 
-
 import org.apache.http.HttpResponse;
-
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,29 +22,17 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 
-
 public class Send_Fragment extends Fragment {
-    View rootview;
     private static final String TAG = "your activity name";
-
+    View rootview;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.send_layout, container, false);
-/*
-        this.arraySpinner = new String[] {
-            "1", "2", "3", "4", "5"
-        };
-
- */
-
-        RetrieveFeedTask obj =new RetrieveFeedTask();
+        RetrieveFeedTask obj = new RetrieveFeedTask();
         obj.execute();
-
-
-        //new RetrieveFeedTask().execute();
-/*
+        /*
 
         Button btnSearch = (Button) rootview.findViewById(R.id.button);
         btnSearch.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +60,7 @@ public class Send_Fragment extends Fragment {
         private Exception exception;
         private ArrayList<String> cities;
 
-        public RetrieveFeedTask(){
+        public RetrieveFeedTask() {
             cities = new ArrayList<String>();
         }
 
@@ -94,11 +76,10 @@ public class Send_Fragment extends Fragment {
                 HttpResponse response = client.execute(request);
                 responseStr = EntityUtils.toString(response.getEntity());
                 Log.d(TAG, "outcome = " + responseStr);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            return "["+responseStr+"]";
+            return "[" + responseStr + "]";
         }
 
         protected void onPostExecute(String result) {
@@ -106,16 +87,16 @@ public class Send_Fragment extends Fragment {
             // TODO: do something with the feed
 
             try {
-                JSONArray json = new JSONArray( result);
+                JSONArray json = new JSONArray(result);
 
                 Log.d("error out", "in onPostExecute results123 : " + result);
                 cities.add("Select");
                 JSONObject jsonobj = json.getJSONObject(0);
-                for (int i=0; i<jsonobj.names().length(); i++) {
-                    String key = (String)jsonobj.names().get(i);
+                for (int i = 0; i < jsonobj.names().length(); i++) {
+                    String key = (String) jsonobj.names().get(i);
                     String val = jsonobj.getString(key);
                     cities.add(val);
-                    Log.d("error out - Element : ", "i + "+i+" val : "+val);
+                    Log.d("error out - Element : ", "i + " + i + " val : " + val);
 
                 }
                 Log.d("error out", "in onPostExecute message : " + "list working");
@@ -130,7 +111,7 @@ public class Send_Fragment extends Fragment {
                 Log.d(TAG, "execute");
                 Spinner s = (Spinner) rootview.findViewById(R.id.spinner);
                 Spinner s1 = (Spinner) rootview.findViewById(R.id.spinner2);
-                ArrayAdapter<String> adapter = new ArrayAdapter(getActivity(),R.layout.support_simple_spinner_dropdown_item,arraySpinner);
+                ArrayAdapter<String> adapter = new ArrayAdapter(getActivity(), R.layout.support_simple_spinner_dropdown_item, arraySpinner);
                 s.setAdapter(adapter);
                 s1.setAdapter(adapter);
 
@@ -139,12 +120,11 @@ public class Send_Fragment extends Fragment {
             }
         }
 
-        public ArrayList<String> getCities(){
+        public ArrayList<String> getCities() {
             return this.cities;
         }
 
     }
-
 
 
 }

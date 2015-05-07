@@ -64,10 +64,10 @@
         android:inputType="date"
         android:ems="10"
         android:id="@+id/editText"
-        android:hint="@string/date"
         android:layout_below="@+id/spinner"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="106dp" />
+        android:layout_marginTop="106dp"
+        android:hint="yyyy-mm-dd" />
 
     <Button
         android:layout_width="wrap_content"

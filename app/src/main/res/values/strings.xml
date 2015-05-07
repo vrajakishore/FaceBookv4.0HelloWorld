@@ -53,6 +53,8 @@
     <string name="send_button">Submit</string>
     <string name="carry_button">Submit</string>
     <string name="Date">Date of Journey</string>
+    <string name="sender_list">SENDER LIST</string>
+    <string name="treaveller_list">TRAVELLER</string>
 
 
     <!--    <string name="com_facebook_loginview_log_in_button_long">Login</string>

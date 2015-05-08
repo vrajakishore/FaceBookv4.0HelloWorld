@@ -17,4 +17,9 @@
         android:title="@string/action_custom_login"
         android:orderInCategory="102"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_signup"
+        android:title="@string/action_signup"
+        android:orderInCategory="102"
+        app:showAsAction="never" />
 </menu>

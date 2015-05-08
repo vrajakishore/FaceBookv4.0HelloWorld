@@ -38,11 +38,12 @@ public class MainActivity extends ActionBarActivity {
     private EditText username;
     private EditText password;
 
-    private static final String TAG = "your activity name";
+    private static final String TAG = "MAIN ACTIVITY";
 
 
     public static final int INDEX_SIMPLE_LOGIN = 0;
     public static final int INDEX_CUSTOM_LOGIN = 1;
+    public static final int INDEX_SIGNUP = 2;
 
     private static final String STATE_SELECTED_FRAGMENT_INDEX = "selected_fragment_index";
     public static final String FRAGMENT_TAG = "fragment_tag";
@@ -96,6 +97,11 @@ public class MainActivity extends ActionBarActivity {
             toggleFragment(INDEX_CUSTOM_LOGIN);
             return true;
         }
+        if (id == R.id.action_signup) {
+            toggleFragment(INDEX_SIGNUP);
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -108,6 +114,9 @@ public class MainActivity extends ActionBarActivity {
                 break;
             case INDEX_CUSTOM_LOGIN:
                 transaction.replace(android.R.id.content, new FragmentCustomLoginButton(),FRAGMENT_TAG);
+                break;
+            case INDEX_SIGNUP:
+                transaction.replace(android.R.id.content, new Registration(),FRAGMENT_TAG);
                 break;
         }
         transaction.commit();

@@ -1,19 +1,30 @@
 package com.freecourier.mv;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.dexafree.materialList.view.MaterialListView;
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
+
+import net.steamcrafted.loadtoast.LoadToast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -35,6 +46,11 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
 
+
+    FloatingActionsMenu menu;
+    MaterialListView cardList;
+
+
     private EditText username;
     private EditText password;
 
@@ -54,6 +70,38 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mFragmentManager = getSupportFragmentManager();
+
+
+
+
+
+
+        cardList = (MaterialListView)findViewById(R.id.cardList);
+        cardList.getLayoutManager().offsetChildrenVertical(30);
+        menu = (FloatingActionsMenu)findViewById(R.id.fab1);
+
+        ActionBar ab=getSupportActionBar();
+        Resources r=getResources();
+        Drawable d=r.getDrawable(R.color.royalBlue);
+        ab.setBackgroundDrawable(d);
+
+        FloatingActionButton fare = (FloatingActionButton)findViewById(R.id.login);
+        fare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                menu.collapse();
+                toggleFragment(INDEX_SIMPLE_LOGIN);
+            }
+        });
+        FloatingActionButton time = (FloatingActionButton)findViewById(R.id.adduser);
+        time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                menu.collapse();
+                toggleFragment(INDEX_SIGNUP);
+            }
+        });
+
     }
 
     @Override
@@ -74,7 +122,10 @@ public class MainActivity extends ActionBarActivity {
         String []args = new String[2];
         args[0] = username.getText().toString().trim();
         args[1] = password.getText().toString().trim();
+
         new RetrieveFeedTask().execute(args);
+
+
     }
 
     @Override
@@ -135,8 +186,8 @@ public class MainActivity extends ActionBarActivity {
             String responseStr = "";
             try {
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-                nameValuePairs.add(new BasicNameValuePair("email", "kishore"));
-                nameValuePairs.add(new BasicNameValuePair("password", "1234"));
+                nameValuePairs.add(new BasicNameValuePair("email", args[0]));
+                nameValuePairs.add(new BasicNameValuePair("password", args[1]));
                 request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 HttpResponse response = client.execute(request);
                 Log.d(TAG, "input = " + args[0]+" - "+args[1]);
@@ -161,6 +212,7 @@ public class MainActivity extends ActionBarActivity {
                 if(message.equalsIgnoreCase("success")){
                     Intent intent = new Intent(MainActivity.this, Main_Navigation.class);
                     // Intent intent = new Intent(MainActivity.this, Signup_Page.class);
+
                     Toast.makeText(MainActivity.this,"Welcome user",Toast.LENGTH_LONG).show();
                     startActivity(intent);
                 }

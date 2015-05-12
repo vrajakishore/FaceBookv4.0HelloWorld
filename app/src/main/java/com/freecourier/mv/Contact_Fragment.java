@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+;
+
 
 public class Contact_Fragment extends Fragment {
     View rootview;
@@ -14,6 +16,9 @@ public class Contact_Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.contact_layout, container, false);
+
+
         return rootview;
     }
+
 }

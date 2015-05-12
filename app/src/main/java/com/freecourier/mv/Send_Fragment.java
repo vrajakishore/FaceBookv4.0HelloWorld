@@ -1,5 +1,6 @@
 package com.freecourier.mv;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -17,6 +18,11 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
+
+import net.steamcrafted.loadtoast.LoadToast;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -32,6 +38,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import dmax.dialog.SpotsDialog;
+
 
 public class Send_Fragment extends Fragment {
     private static final String TAG = "SEND FRAGMENT";
@@ -39,6 +47,11 @@ public class Send_Fragment extends Fragment {
 
     View rootview;
     private EditText date;
+
+    AlertDialog dialog;
+
+
+
 
     @Nullable
     @Override
@@ -75,10 +88,13 @@ public class Send_Fragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putString("src",args[0]);
                 bundle.putString("des",args[1]);
-                bundle.putString("jdate",args[2]);
+                bundle.putString("jdate", args[2]);
                 fragment.setArguments(bundle);
 
+
+
                 new RetrieveFeedTask2().execute(args);
+
 
 
                 Fragment home = new Travellers();  //this is your new fragment.
@@ -88,7 +104,8 @@ public class Send_Fragment extends Fragment {
                         .commit();
 
 
-                Toast.makeText(getActivity(), "Successfully submitted ", Toast.LENGTH_LONG).show();
+               Toast.makeText(getActivity(), "Successfully submitted ", Toast.LENGTH_LONG).show();
+
                // Log.d(TAG, "Button onclick end   ");
             }
         });
@@ -155,6 +172,7 @@ public class Send_Fragment extends Fragment {
         @Override
         protected String doInBackground(String[] args) {
 
+
             Log.d(TAG, "execute1");
             DefaultHttpClient client = new DefaultHttpClient();
             String url = "http://172.16.32.54:8888/rest/user/get_cities/";
@@ -197,11 +215,14 @@ public class Send_Fragment extends Fragment {
                 //obj.getCities().toArray(this.arraySpinner);
 
                 Log.d(TAG, "execute");
+               // Spinner s = (Spinner) rootview.findViewById(R.id.spinner);
+               // Spinner s1 = (Spinner) rootview.findViewById(R.id.spinner2);
                 Spinner s = (Spinner) rootview.findViewById(R.id.spinner);
                 Spinner s1 = (Spinner) rootview.findViewById(R.id.spinner2);
                 ArrayAdapter<String> adapter = new ArrayAdapter(getActivity(), R.layout.support_simple_spinner_dropdown_item, arraySpinner);
                 s.setAdapter(adapter);
                 s1.setAdapter(adapter);
+
 
             } catch (JSONException e) {
                 e.printStackTrace();

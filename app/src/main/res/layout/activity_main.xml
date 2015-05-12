@@ -1,7 +1,51 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:layout="@layout/fragment_simple_login_button"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:layout="@layout/fragment_simple_login_button">
+
+    <com.dexafree.materialList.view.MaterialListView
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:id="@+id/cardList"
+        />
+
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/fab1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="bottom|right"
+        fab:fab_addButtonPlusIconColor="@android:color/white"
+        fab:fab_expandDirection="up"
+        fab:fab_labelStyle="@style/menu_labels_style"
+        fab:fab_size="normal">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_icon="@drawable/login"
+            fab:fab_size="mini"
+
+            fab:fab_title="Existing User!!" />
+
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/adduser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_icon="@drawable/add_user"
+            fab:fab_size="mini"
+            fab:fab_title="New User!!" />
+
+
+
+
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
 
 </FrameLayout>

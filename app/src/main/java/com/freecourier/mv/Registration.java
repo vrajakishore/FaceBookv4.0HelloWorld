@@ -1,5 +1,6 @@
 package com.freecourier.mv;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -30,6 +32,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import dmax.dialog.SpotsDialog;
+
 
 public class Registration extends Fragment {
     View rootview;
@@ -40,6 +44,10 @@ public class Registration extends Fragment {
     private EditText pass;
     private EditText repass;
     private EditText phone;
+    private EditText dob;
+    private EditText city;
+    private RadioButton femaleBtn ;
+    private RadioButton maleBtn ;
 
     @Nullable
     @Override
@@ -59,24 +67,32 @@ public class Registration extends Fragment {
                 pass = (EditText) rootview.findViewById(R.id.password);
                 repass = (EditText) rootview.findViewById(R.id.repass);
                 phone = (EditText) rootview.findViewById(R.id.phone);
+                dob = (EditText) rootview.findViewById(R.id.dob);
+                femaleBtn = (RadioButton) rootview.findViewById(R.id.gender_female);
+                maleBtn = (RadioButton) rootview.findViewById(R.id.gender_male);
 
-
-
-                String[] args = new String[5];
+                city = (EditText) rootview.findViewById(R.id.city);
+                String[] args = new String[7];
 
                 args[0] = email.getText().toString().trim();
                 args[1] = name.getText().toString().trim();
-                if(pass.equals(repass)) {
-                    args[2] = pass.getText().toString().trim();
-                }else{
-                    Toast.makeText(getActivity(),"Password field should match",Toast.LENGTH_SHORT).show();
 
-                }
+                    args[2] = pass.getText().toString().trim();
+
                 args[3] = phone.getText().toString().trim();
+                args[5] = dob.getText().toString().trim();
+
+                if(femaleBtn.isChecked()) {
+                    args[4] = "female";
+                } else if(maleBtn.isChecked()) {
+                    args[4] = "male";
+                }
+
+                args[6] = city.getText().toString().trim();
 
                 new RetrieveFeedTask().execute(args);
 
-                Toast.makeText(getActivity(), "Successfully submitted ", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "Successfully submitted ", Toast.LENGTH_LONG).show();
                 // Log.d(TAG, "Button onclick end   ");
             }
         });
@@ -88,23 +104,29 @@ public class Registration extends Fragment {
 
         private Exception exception;
 
+
+
         @Override
         protected String doInBackground(String[] args) {
+
             DefaultHttpClient client = new DefaultHttpClient();
-            String url = "http://172.16.32.54:8888/rest/user/login/";
+            String url = "http://172.16.32.54:8888/rest/user/registration/";
             HttpPost request = new HttpPost(url);
             String responseStr = "";
             try {
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(5);
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(6);
                 nameValuePairs.add(new BasicNameValuePair("email", args[0]));
-                nameValuePairs.add(new BasicNameValuePair("name", args[1]));
-                nameValuePairs.add(new BasicNameValuePair("password", args[2]));
+                nameValuePairs.add(new BasicNameValuePair("fullname", args[1]));
+                nameValuePairs.add(new BasicNameValuePair("pwd", args[2]));
                 nameValuePairs.add(new BasicNameValuePair("phone", args[3]));
+                nameValuePairs.add(new BasicNameValuePair("gender", args[4]));
+                nameValuePairs.add(new BasicNameValuePair("dob", args[5]));
+                nameValuePairs.add(new BasicNameValuePair("city", args[6]));
 
 
                 request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 HttpResponse response = client.execute(request);
-                Log.d(TAG, "input = " + args[0]+" - "+args[1]+" - "+args[2]+" - "+args[3]);
+                Log.d(TAG, "input = " + args[0]+" - "+args[1]+" - "+args[2]+" - "+args[3]+" - "+args[4]+" - "+args[5]+" - "+args[6]);
                 responseStr = EntityUtils.toString(response.getEntity());
                 Log.d(TAG, "outcome = " + responseStr);
             }
@@ -121,10 +143,19 @@ public class Registration extends Fragment {
                 JSONArray json = new JSONArray( result);
 
                 JSONObject jsonobj = json.getJSONObject(0);
+                Log.d("error out", "in onPostExecute results123 : " + result);
                 String message = jsonobj.getString("message");
-                Log.d("error out", "in onPostExecute message : " + message);
+               // Log.d("error out", "in onPostExecute message : " + message);
                 if(message.equalsIgnoreCase("success")){
+                    //Log.d("1111error out", "in onPostExecute message : " + message);
                     Toast.makeText(getActivity(), "Successfully registered", Toast.LENGTH_LONG).show();
+
+
+                }else if(message.equalsIgnoreCase("Already registered")){
+                    //Log.d("error out", "in onPostExecute message11111 : " + message);
+                    //Intent intent = new Intent(getActivity(), Registration.class);
+                    Toast.makeText(getActivity(), "Already registered", Toast.LENGTH_LONG).show();
+                    //startActivity(intent);
                 }
 
             } catch (JSONException e) {

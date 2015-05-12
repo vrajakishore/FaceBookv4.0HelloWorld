@@ -14,11 +14,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="438dp"
-        android:layout_gravity="center_horizontal">
+
 
         <ListView
             android:id="@+id/listView1"
@@ -27,5 +23,5 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="60dp" />
 
-    </ScrollView>
+
 </LinearLayout>

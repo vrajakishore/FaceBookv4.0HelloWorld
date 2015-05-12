@@ -1,5 +1,6 @@
 package com.freecourier.mv;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,6 +23,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import dmax.dialog.SpotsDialog;
 
 
 public class Carry_Fragment extends Fragment {

@@ -14,12 +14,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import net.steamcrafted.loadtoast.LoadToast;
 
@@ -35,7 +37,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import dmax.dialog.SpotsDialog;
@@ -46,9 +51,8 @@ public class Send_Fragment extends Fragment {
     public String source1,destination,jdate;
 
     View rootview;
-    private EditText date;
+    private CalendarView calendar;
 
-    AlertDialog dialog;
 
 
 
@@ -68,6 +72,9 @@ public class Send_Fragment extends Fragment {
             public void onClick(View v) {
                 // Log.d(TAG, "Button inside ");
 
+
+
+
                 Spinner s_1 = (Spinner) rootview.findViewById(R.id.spinner);
                 Spinner s_2 = (Spinner) rootview.findViewById(R.id.spinner2);
 
@@ -78,8 +85,17 @@ public class Send_Fragment extends Fragment {
                 args[1] = s_2.getSelectedItem().toString();
                 destination = args[1];
 
-                date = (EditText) rootview.findViewById(R.id.editText);
-                args[2] = date.getText().toString().trim();
+
+                DatePicker datePicker = (DatePicker) rootview.findViewById(R.id.datePicker);
+                int day = datePicker.getDayOfMonth();
+                int month = datePicker.getMonth() + 1;
+                int year = datePicker.getYear();
+
+               // SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+
+                //args[2] = sdf.format(new Date(calendar.getDate()));
+                args[2] = year+"/"+month+"/"+day;
+
                 jdate = args[2];
                 Log.d(TAG, "Button inside kishore " + source1 + " " + destination + " " + jdate);
 
@@ -92,16 +108,18 @@ public class Send_Fragment extends Fragment {
                 fragment.setArguments(bundle);
 
 
-
+               
                 new RetrieveFeedTask2().execute(args);
 
+                Intent intent = new Intent(getActivity(), Traveller_activity.class);
+                startActivity(intent);
 
-
+/*
                 Fragment home = new Travellers();  //this is your new fragment.
                 android.app.FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, home)
-                        .commit();
+                        .commit();  */
 
 
                Toast.makeText(getActivity(), "Successfully submitted ", Toast.LENGTH_LONG).show();
@@ -228,6 +246,7 @@ public class Send_Fragment extends Fragment {
                 e.printStackTrace();
             }
         }
+
 
         public ArrayList<String> getCities() {
             return this.cities;

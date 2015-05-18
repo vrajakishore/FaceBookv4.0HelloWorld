@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.freecourier.mv" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -30,8 +32,14 @@
             android:name=".Main_Navigation"
             android:label="@string/title_activity_navigation_main" >
         </activity>
-
+        <activity
+            android:name=".Traveller_activity"
+            android:label="@string/title_activity_traveller_activity" >
+        </activity>
+        <activity
+            android:name=".TravellerDetails"
+            android:label="@string/title_activity_traveller_details" >
+        </activity>
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

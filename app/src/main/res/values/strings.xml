@@ -34,6 +34,9 @@
     <string name="title_section6">Contact Us</string>
     <string name="title_section7">Logout</string>
 
+
+
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -60,7 +63,11 @@
     <string name="Registration_button">Sign Up</string>
     <string name="gender_female" >Female</string>
     <string name="gender_male" >Male</string>
+    <string name="title_activity_traveller_activity">Traveller_activity</string>
 
+    <string name="title_activity_traveller_details">TravellerDetails</string>
+    <string name="travellerDetails_title">TRAVELLER DETAILS</string>
+    <string name="ttd_select">Select</string>
 
 
     <!--    <string name="com_facebook_loginview_log_in_button_long">Login</string>

@@ -1,30 +1,30 @@
 package com.freecourier.mv;
 
-import static com.freecourier.mv.Declaration.Constant.*;
-import com.freecourier.mv.Declaration.ListViewAdapter;
-import com.freecourier.mv.Send_Fragment;
-
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.freecourier.mv.Declaration.ListViewAdapter;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -37,24 +37,31 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by m.v on 04-05-2015.
- */
-public class Travellers extends Fragment {
+import static com.freecourier.mv.Declaration.Constant.FIRST_COLUMN;
+import static com.freecourier.mv.Declaration.Constant.FOURTH_COLUMN;
+import static com.freecourier.mv.Declaration.Constant.SECOND_COLUMN;
+import static com.freecourier.mv.Declaration.Constant.THIRD_COLUMN;
 
-    private EditText date;
-    View rootview;
+
+public class Traveller_activity extends ActionBarActivity {
     private static final String TAG = "TRAVELLER PAGE";
     private ArrayList<HashMap<String, String>> list;
 
 
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        rootview = inflater.inflate(R.layout.travellers_fragment, container, false);
 
-        //Bundle bundle = this.getArguments();
+
+
+    public Traveller_activity() {
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_traveller);
+
+
+
         String []argu = new String[3];
         //argu[0] = bundle.getString("src");
         //argu[1] = bundle.getString("des");
@@ -62,17 +69,32 @@ public class Travellers extends Fragment {
         argu[0]="Hyderabad";
         argu[1]="Kakinada";
         argu[2]="2015-04-09";
-        Log.d(TAG, argu[0] + " " + " " + argu[1] + " "+argu[2]);
-
-
-
+        Log.d(TAG, argu[0] + " " + " " + argu[1] + " " + argu[2]);
         new RetrieveFeedTask().execute(argu);
-
-
-
-
-        return rootview;
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_traveller_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
 
     class RetrieveFeedTask extends AsyncTask<String, Void, String> {
@@ -158,8 +180,8 @@ public class Travellers extends Fragment {
                 Log.d("error out", "in onPostExecute message : " + "list working and size :" +list.size()+ " - "+list.toString());
                 //getCities();
 
-                ListView listView=(ListView)rootview.findViewById(R.id.listView1);
-                ListViewAdapter adapter=new ListViewAdapter(getActivity(), list);
+                ListView listView=(ListView)findViewById(R.id.listView1);
+                ListViewAdapter adapter=new ListViewAdapter(Traveller_activity.this, list);
                 listView.setAdapter(adapter);
 
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -168,17 +190,23 @@ public class Travellers extends Fragment {
                         int pos = position;
                         if(pos>0) {
                             HashMap<String,String> selectedItem = list.get(pos);
-                           // Toast.makeText(getActivity(), selectedItem.toString() + " Clicked", Toast.LENGTH_SHORT).show();
-                            String email = selectedItem.get(FIRST_COLUMN);
+                            // Toast.makeText(getActivity(), selectedItem.toString() + " Clicked", Toast.LENGTH_SHORT).show();
+                            final String email = selectedItem.get(FIRST_COLUMN);
 
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            AlertDialog.Builder builder = new AlertDialog.Builder(Traveller_activity.this);
                             builder.setMessage("Do you want to select this?");
                             builder.setTitle("Confirm the traveller !!! ");
 
                             builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     // do something after confirm
-                                    Toast.makeText(getActivity(), "Selected", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Traveller_activity.this, email+" Selected", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(Traveller_activity.this, TravellerDetails.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("email",email);
+                                    intent.putExtras(bundle);
+
+                                    startActivity(intent);
                                 }
                             });
 
@@ -204,5 +232,4 @@ public class Travellers extends Fragment {
 
 
     }
-
 }

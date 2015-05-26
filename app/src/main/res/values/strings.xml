@@ -52,6 +52,8 @@
     <string name="send_fragment_title">SEND</string>
     <string name="carry_fragment_title">CARRY</string>
     <string name="receive_fragment_title">RECEIVE</string>
+    <string name="share_fragment_title">SHARE</string>
+    <string name="contact_fragment_title">CONTACT US</string>
     <string name="destination">Destination</string>
     <string name="source">Source</string>
     <string name="date">dd/mm/yy</string>
@@ -68,6 +70,7 @@
     <string name="title_activity_traveller_details">TravellerDetails</string>
     <string name="travellerDetails_title">TRAVELLER DETAILS</string>
     <string name="ttd_select">Select</string>
+    <string name="title_activity_history">History</string>
 
 
     <!--    <string name="com_facebook_loginview_log_in_button_long">Login</string>

@@ -9,6 +9,4 @@ public class Constant {
     public static final String THIRD_COLUMN="Date";
     public static final String FOURTH_COLUMN="Time";
 
-
-
 }

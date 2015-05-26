@@ -49,7 +49,7 @@ import dmax.dialog.SpotsDialog;
 public class Send_Fragment extends Fragment {
     private static final String TAG = "SEND FRAGMENT";
     public String source1,destination,jdate;
-
+    static final int DILOG_ID = 0;
     View rootview;
     private CalendarView calendar;
 

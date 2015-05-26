@@ -150,8 +150,6 @@ public class Travellers extends Fragment {
 
                     // Log.d("error out - Element : ", "i + " + i + " val : " + key);
 
-
-
                 }
 
 

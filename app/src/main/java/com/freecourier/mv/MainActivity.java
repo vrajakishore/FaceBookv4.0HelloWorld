@@ -1,5 +1,7 @@
 package com.freecourier.mv;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -21,6 +23,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.dexafree.materialList.view.MaterialListView;
+
+import com.freecourier.mv.Declaration.UserSessionManager;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
@@ -40,6 +44,7 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +55,8 @@ public class MainActivity extends ActionBarActivity {
     FloatingActionsMenu menu;
     MaterialListView cardList;
 
+
+    UserSessionManager session;
 
     private EditText username;
     private EditText password;
@@ -71,7 +78,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         mFragmentManager = getSupportFragmentManager();
 
-
+        session = new UserSessionManager(getApplicationContext());
 
 
 
@@ -121,6 +128,8 @@ public class MainActivity extends ActionBarActivity {
         password = (EditText) findViewById(R.id.password);
         String []args = new String[2];
         args[0] = username.getText().toString().trim();
+
+
         args[1] = password.getText().toString().trim();
 
         new RetrieveFeedTask().execute(args);
@@ -191,6 +200,7 @@ public class MainActivity extends ActionBarActivity {
                 request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 HttpResponse response = client.execute(request);
                 Log.d(TAG, "input = " + args[0]+" - "+args[1]);
+
                 responseStr = EntityUtils.toString(response.getEntity());
                 Log.d(TAG, "outcome = " + responseStr);
             }
@@ -210,11 +220,42 @@ public class MainActivity extends ActionBarActivity {
                 String message = jsonobj.getString("message");
                 Log.d("error out", "in onPostExecute message : " + message);
                 if(message.equalsIgnoreCase("success")){
+
+                    username = (EditText) findViewById(R.id.username);
+                    String email = username.getText().toString().trim();
+
+                    session.createUserLoginSession("session_email", email);
+
                     Intent intent = new Intent(MainActivity.this, Main_Navigation.class);
                     // Intent intent = new Intent(MainActivity.this, Signup_Page.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
+                    // Add new Flag to start new Activity
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     Toast.makeText(MainActivity.this,"Welcome user",Toast.LENGTH_LONG).show();
                     startActivity(intent);
+                }
+                else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage("Username or Password is wrong!!! Try again?");
+                    builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do something after confirm
+                           // Toast.makeText(MainActivity.this, Selected", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+
+
+                            startActivity(intent);
+                        }
+                    });
+
+                    builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.create().show();
                 }
 
             } catch (JSONException e) {

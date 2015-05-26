@@ -1,5 +1,7 @@
 package com.freecourier.mv;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
@@ -7,10 +9,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.freecourier.mv.Declaration.UserSessionManager;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -26,15 +31,19 @@ import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class TravellerDetails extends ActionBarActivity {
     private static final String TAG = "TRAVELLER DETAILS PAGE";
 
+    UserSessionManager session;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_traveller_details);
+
 
         RetrieveFeedTask obj = new RetrieveFeedTask();
         obj.execute();
@@ -61,6 +70,13 @@ public class TravellerDetails extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void booking(View v){
+
+        RetrieveFeedTask2 obj1 = new RetrieveFeedTask2();
+        obj1.execute();
+    }
+
 
 
     class RetrieveFeedTask extends AsyncTask<String, Void, String> {
@@ -134,7 +150,99 @@ public class TravellerDetails extends ActionBarActivity {
         }
 
 
+    }
 
+    class RetrieveFeedTask2 extends AsyncTask<String, Void, String> {
+
+        private Exception exception;
+        private ArrayList<String> travellerDetails;
+
+        public RetrieveFeedTask2() {
+            travellerDetails = new ArrayList<String>();
+        }
+
+        @Override
+        protected String doInBackground(String[] args) {
+            Bundle bundle = getIntent().getExtras();
+            String argu = bundle.getString("email");
+
+            session = new UserSessionManager(getApplicationContext());
+
+            if(session.checkLogin())
+                finish();
+
+            // get user data from session
+            HashMap<String, String> user = session.getUserDetails();
+
+            // get name
+            String name = user.get(UserSessionManager.KEY_NAME);
+
+            // get email
+            String email = user.get(UserSessionManager.KEY_EMAIL);
+
+
+            Log.d(TAG, "session = " +name+" "+email);
+
+            Log.d(TAG, "execute1 " + argu);
+            DefaultHttpClient client = new DefaultHttpClient();
+            String url = "http://172.16.32.54:8888/rest/user/insert_booking_info/"+email+"/" + argu;
+            HttpGet request = new HttpGet(url);
+            String responseStr = "";
+            try {
+
+                HttpResponse response = client.execute(request);
+                responseStr = EntityUtils.toString(response.getEntity());
+                Log.d(TAG, "outcome = " + responseStr);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return "[" + responseStr + "]";
+        }
+
+        protected void onPostExecute(String result) {
+            // TODO: check this.exception
+            // TODO: do something with the feed
+            try {
+                JSONArray json = new JSONArray(result);
+
+                JSONObject jsonobj = json.getJSONObject(0);
+                for (int i = 0; i < jsonobj.names().length(); i++) {
+                    String key = (String) jsonobj.names().get(i);
+                    String val = jsonobj.getString(key);
+                    travellerDetails.add(val);
+                    Log.d("error out - Element : ", "i + " + i + " val : " + val);
+                }
+
+                final String bookingID = travellerDetails.get(0);
+
+                if(bookingID.equals("fail")){
+
+                   // Log.d("EPUDAINA  : ", "i + "  + " val : " + bookingID);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(TravellerDetails.this);
+                    builder.setMessage("This person is already selected\nSelect someone else....");
+                    builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                           /* Intent intent = new Intent(TravellerDetails.this, Traveller_activity.class);
+                            startActivity(intent); */
+                        }
+                    });
+                  /*  builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    }); */
+
+                    builder.create().show();
+                }else{
+                    Toast.makeText(TravellerDetails.this, "Booking Confirmed with ID " + bookingID, Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
 
     }
 }

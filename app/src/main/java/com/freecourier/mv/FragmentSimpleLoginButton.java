@@ -106,6 +106,7 @@ public class FragmentSimpleLoginButton extends Fragment {
         super.onStop();
         mTokenTracker.stopTracking();
         mProfileTracker.stopTracking();
+
     }
 
     @Override

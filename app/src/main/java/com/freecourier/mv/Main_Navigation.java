@@ -49,21 +49,26 @@ public class Main_Navigation extends ActionBarActivity
         switch (position) {
             case 0:
                 objFragment = new Send_Fragment();
+                mTitle = "Send";
                 break;
             case 1:
                 objFragment = new Carry_Fragment();
+                mTitle = "Carry";
                 break;
             case 2:
                 objFragment = new Receive_Fragment();
                 break;
             case 3:
                 objFragment = new History_Fragment();
+                mTitle = "History";
                 break;
             case 4:
                 objFragment = new Share_Fragment();
+                mTitle = "Share";
                 break;
             case 5:
                 objFragment = new Contact_Fragment();
+                mTitle = "Contact";
                 break;
             case 6:
                 objFragment = new Logout();
@@ -82,7 +87,7 @@ public class Main_Navigation extends ActionBarActivity
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_section1);
+                mTitle = getString(R.string.send_fragment_title);
                 break;
             case 2:
                 mTitle = getString(R.string.title_section2);

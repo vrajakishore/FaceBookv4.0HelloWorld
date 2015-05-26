@@ -9,7 +9,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="1"
+        android:text="SHARE THE APP"
         android:id="@+id/section_label" />
+
+    <ImageButton
+        android:src="@mipmap/shareit"
+        android:layout_width="wrap_content"
+        android:id="@+id/newbutton"
+        android:clickable="true"
+        android:onClick="clickNew"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:layout_marginTop="132dp"
+        android:layout_below="@+id/section_label"
+        android:layout_alignLeft="@+id/section_label"
+        android:layout_alignStart="@+id/section_label" />
+
+    <ImageButton
+        android:src="@mipmap/whatsapp"
+        android:layout_width="wrap_content"
+        android:id="@+id/newbutton1"
+        android:clickable="true"
+        android:onClick="clickNew1"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:layout_alignTop="@+id/newbutton"
+        android:layout_alignRight="@+id/section_label"
+        android:layout_alignEnd="@+id/section_label" />
 
 </RelativeLayout>

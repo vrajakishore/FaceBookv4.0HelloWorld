@@ -44,7 +44,7 @@ import static com.freecourier.mv.Declaration.Constant.THIRD_COLUMN;
 
 
 public class Traveller_activity extends ActionBarActivity {
-    private static final String TAG = "TRAVELLER PAGE";
+   private static final String TAG = "TRAVELLER PAGE";
     private ArrayList<HashMap<String, String>> list;
 
 

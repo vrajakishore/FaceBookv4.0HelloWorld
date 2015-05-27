@@ -90,6 +90,7 @@
     <orderEntry type="library" exported="" name="library-material-1.1.0" level="project" />
     <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="spots-dialog-0.3" level="project" />
+    <orderEntry type="library" exported="" name="support-v13-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="materiallist-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="picasso-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="floatingactionbutton-1.5.1" level="project" />
@@ -99,6 +100,7 @@
     <orderEntry type="library" exported="" name="appcompat-v7-22.1.1" level="project" />
     <orderEntry type="library" exported="" name="lib-core-3.1.0" level="project" />
     <orderEntry type="library" exported="" name="facebook-android-sdk-4.0.0" level="project" />
+    <orderEntry type="library" exported="" name="datetimepicker-0.1.2" level="project" />
     <orderEntry type="library" exported="" name="otto-1.3.5" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="bolts-android-1.1.4" level="project" />

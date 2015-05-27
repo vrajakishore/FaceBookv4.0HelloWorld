@@ -30,7 +30,7 @@ dependencies {
     compile 'com.getbase:floatingactionbutton:1.5.1'
     compile 'net.steamcrafted:load-toast:1.0.6'
     compile 'com.github.d-max:spots-dialog:0.3@aar'
-
+    compile 'com.github.citux:datetimepicker:0.1.2'
     compile 'com.weiwangcn.betterspinner:library-material:1.1.0'
 
 }

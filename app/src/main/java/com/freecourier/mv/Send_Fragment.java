@@ -1,29 +1,18 @@
 package com.freecourier.mv;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.internal.widget.AdapterViewCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CalendarView;
-import android.widget.DatePicker;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-
-
-
-import net.steamcrafted.loadtoast.LoadToast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -37,24 +26,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-
-import dmax.dialog.SpotsDialog;
 
 
 public class Send_Fragment extends Fragment {
     private static final String TAG = "SEND FRAGMENT";
-    public String source1,destination,jdate;
-    static final int DILOG_ID = 0;
+    public static String dt = null;
+    public static String tm = null;
+    public String source1, destination, jdate;
+    public static final int DATEPICKER_FRAGMENT = 1; // class variable
+
+
     View rootview;
-    private CalendarView calendar;
-
-
-
 
 
     @Nullable
@@ -70,10 +54,6 @@ public class Send_Fragment extends Fragment {
 
 
             public void onClick(View v) {
-                // Log.d(TAG, "Button inside ");
-
-
-
 
                 Spinner s_1 = (Spinner) rootview.findViewById(R.id.spinner);
                 Spinner s_2 = (Spinner) rootview.findViewById(R.id.spinner2);
@@ -85,8 +65,25 @@ public class Send_Fragment extends Fragment {
                 args[1] = s_2.getSelectedItem().toString();
                 destination = args[1];
 
+                ImageView btnNew = (ImageView) rootview.findViewById(R.id.newbutton);
 
-                DatePicker datePicker = (DatePicker) rootview.findViewById(R.id.datePicker);
+                btnNew.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+
+
+                        com.freecourier.mv.Declaration.DatePicker newFragment = new com.freecourier.mv.Declaration.DatePicker();
+
+                        newFragment.show(getFragmentManager(), "DatePicker");
+
+
+                    }
+
+
+                });
+
+          /*      DatePicker datePicker = (DatePicker) rootview.findViewById(R.id.datePicker);
                 int day = datePicker.getDayOfMonth();
                 int month = datePicker.getMonth() + 1;
                 int year = datePicker.getYear();
@@ -94,12 +91,15 @@ public class Send_Fragment extends Fragment {
                // SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 
                 //args[2] = sdf.format(new Date(calendar.getDate()));
-                args[2] = year+"/"+month+"/"+day;
+                args[2] = year+"/"+month+"/"+day;*/
 
                 jdate = args[2];
+                // Toast.makeText(getActivity(), dt , Toast.LENGTH_LONG).show();
+
+
                 Log.d(TAG, "Button inside kishore " + source1 + " " + destination + " " + jdate);
 
-                //Toast.makeText(getActivity(),"source"+source1+" destination"+destination+" jdate" +jdate,Toast.LENGTH_LONG).show();
+         /*       //Toast.makeText(getActivity(),"source"+source1+" destination"+destination+" jdate" +jdate,Toast.LENGTH_LONG).show();
                 Fragment fragment = new Fragment();
                 Bundle bundle = new Bundle();
                 bundle.putString("src",args[0]);
@@ -107,29 +107,24 @@ public class Send_Fragment extends Fragment {
                 bundle.putString("jdate", args[2]);
                 fragment.setArguments(bundle);
 
+*/
 
-               
                 new RetrieveFeedTask2().execute(args);
 
                 Intent intent = new Intent(getActivity(), Traveller_activity.class);
                 startActivity(intent);
 
-/*
-                Fragment home = new Travellers();  //this is your new fragment.
-                android.app.FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, home)
-                        .commit();  */
+                //Toast.makeText(getActivity(), "Successfully submitted ", Toast.LENGTH_LONG).show();
 
-
-               Toast.makeText(getActivity(), "Successfully submitted ", Toast.LENGTH_LONG).show();
-
-               // Log.d(TAG, "Button onclick end   ");
+                // Log.d(TAG, "Button onclick end   ");
             }
         });
 
         return rootview;
+
+
     }
+
 
     class RetrieveFeedTask2 extends AsyncTask<String, Void, String> {
 
@@ -148,26 +143,25 @@ public class Send_Fragment extends Fragment {
                 nameValuePairs.add(new BasicNameValuePair("date", args[2]));
                 request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 HttpResponse response = client.execute(request);
-                Log.d(TAG, "input = " + args[0]+" - "+args[1]+" - "+args[2]) ;
+                Log.d(TAG, "input = " + args[0] + " - " + args[1] + " - " + args[2]);
                 responseStr = EntityUtils.toString(response.getEntity());
                 Log.d(TAG, "outcome = " + responseStr);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            return "["+responseStr+"]";
+            return "[" + responseStr + "]";
         }
 
         protected void onPostExecute(String result) {
             // TODO: check this.exception
             // TODO: do something with the feed
             try {
-                JSONArray json = new JSONArray( result);
+                JSONArray json = new JSONArray(result);
 
                 JSONObject jsonobj = json.getJSONObject(0);
                 String message = jsonobj.getString("message");
                 Log.d("error out", "in onPostExecute message : " + message);
-                if(message.equalsIgnoreCase("success")){
+                if (message.equalsIgnoreCase("success")) {
 
                 }
 
@@ -233,8 +227,8 @@ public class Send_Fragment extends Fragment {
                 //obj.getCities().toArray(this.arraySpinner);
 
                 Log.d(TAG, "execute");
-               // Spinner s = (Spinner) rootview.findViewById(R.id.spinner);
-               // Spinner s1 = (Spinner) rootview.findViewById(R.id.spinner2);
+                // Spinner s = (Spinner) rootview.findViewById(R.id.spinner);
+                // Spinner s1 = (Spinner) rootview.findViewById(R.id.spinner2);
                 Spinner s = (Spinner) rootview.findViewById(R.id.spinner);
                 Spinner s1 = (Spinner) rootview.findViewById(R.id.spinner2);
                 ArrayAdapter<String> adapter = new ArrayAdapter(getActivity(), R.layout.support_simple_spinner_dropdown_item, arraySpinner);

@@ -19,10 +19,11 @@
 
         android:layout_height="wrap_content"
         android:id="@+id/spinner"
-        android:layout_marginTop="30dp"
 
-        android:layout_below="@+id/textView"
-        android:layout_toStartOf="@+id/button" />
+        android:layout_above="@+id/newbutton"
+        android:layout_toLeftOf="@+id/button"
+        android:layout_toStartOf="@+id/button"
+        android:layout_marginBottom="70dp" />
 
     <Spinner
         android:layout_width="100dp"
@@ -30,6 +31,19 @@
         android:id="@+id/spinner2"
         android:layout_alignTop="@+id/spinner"
         android:layout_toEndOf="@+id/button" />
+
+    <ImageButton
+        android:src="@mipmap/calendar"
+        android:layout_width="wrap_content"
+        android:id="@+id/newbutton"
+        android:clickable="true"
+        android:onClick="clickNew"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -64,13 +78,15 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="58dp" />
 
-    <DatePicker
+    <TextView
         android:layout_width="wrap_content"
-        android:layout_height="200dp"
-        android:id="@+id/datePicker"
-        android:layout_below="@+id/spinner"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Date"
+        android:id="@+id/get_date"
+        android:layout_below="@+id/newbutton"
         android:layout_centerHorizontal="true"
-        android:calendarViewShown="true" />
+        android:layout_marginTop="28dp" />
 
 
 </RelativeLayout>

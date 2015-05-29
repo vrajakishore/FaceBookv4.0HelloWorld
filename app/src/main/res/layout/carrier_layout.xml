@@ -97,7 +97,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Time"
-        android:id="@+id/get_date"
+        android:id="@+id/get_time"
         android:layout_marginTop="28dp"
         android:layout_below="@+id/newbutton1"
         android:layout_alignRight="@+id/newbutton1"
@@ -108,8 +108,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Date"
-        android:id="@+id/get_time"
-        android:layout_alignTop="@+id/get_date"
+        android:id="@+id/get_date"
+        android:layout_alignTop="@+id/get_time"
         android:layout_alignLeft="@+id/newbutton"
         android:layout_alignStart="@+id/newbutton" />
 

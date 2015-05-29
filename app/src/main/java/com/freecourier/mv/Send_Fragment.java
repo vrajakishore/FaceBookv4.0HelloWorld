@@ -1,5 +1,6 @@
 package com.freecourier.mv;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -11,8 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.freecourier.mv.Declaration.DatePicker;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -32,10 +38,10 @@ import java.util.List;
 
 public class Send_Fragment extends Fragment {
     private static final String TAG = "SEND FRAGMENT";
-    public static String dt = null;
-    public static String tm = null;
+
     public String source1, destination, jdate;
-    public static final int DATEPICKER_FRAGMENT = 1; // class variable
+
+    TextView date_text_view;
 
 
     View rootview;
@@ -65,33 +71,8 @@ public class Send_Fragment extends Fragment {
                 args[1] = s_2.getSelectedItem().toString();
                 destination = args[1];
 
-                ImageView btnNew = (ImageView) rootview.findViewById(R.id.newbutton);
-
-                btnNew.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-
-
-                        com.freecourier.mv.Declaration.DatePicker newFragment = new com.freecourier.mv.Declaration.DatePicker();
-
-                        newFragment.show(getFragmentManager(), "DatePicker");
-
-
-                    }
-
-
-                });
-
-          /*      DatePicker datePicker = (DatePicker) rootview.findViewById(R.id.datePicker);
-                int day = datePicker.getDayOfMonth();
-                int month = datePicker.getMonth() + 1;
-                int year = datePicker.getYear();
-
-               // SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-
-                //args[2] = sdf.format(new Date(calendar.getDate()));
-                args[2] = year+"/"+month+"/"+day;*/
+                date_text_view = (TextView)rootview.findViewById(R.id.get_date);
+                args[2] = date_text_view.getText().toString();
 
                 jdate = args[2];
                 // Toast.makeText(getActivity(), dt , Toast.LENGTH_LONG).show();
@@ -107,16 +88,35 @@ public class Send_Fragment extends Fragment {
                 bundle.putString("jdate", args[2]);
                 fragment.setArguments(bundle);
 
-*/
+         */
 
                 new RetrieveFeedTask2().execute(args);
 
+
+                Bundle bundle = new Bundle();
+                bundle.putString("src",args[0]);
+                bundle.putString("des",args[1]);
+                bundle.putString("jdate", args[2]);
+
                 Intent intent = new Intent(getActivity(), Traveller_activity.class);
+                intent.putExtras(bundle);
+
                 startActivity(intent);
 
                 //Toast.makeText(getActivity(), "Successfully submitted ", Toast.LENGTH_LONG).show();
 
                 // Log.d(TAG, "Button onclick end   ");
+            }
+        });
+
+        ImageView btnNew = (ImageView) rootview.findViewById(R.id.newbutton);
+        btnNew.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                com.freecourier.mv.Declaration.DatePicker newFragment = new com.freecourier.mv.Declaration.DatePicker();
+                newFragment.show(getFragmentManager(), "DatePicker");
+
             }
         });
 
@@ -161,9 +161,13 @@ public class Send_Fragment extends Fragment {
                 JSONObject jsonobj = json.getJSONObject(0);
                 String message = jsonobj.getString("message");
                 Log.d("error out", "in onPostExecute message : " + message);
-                if (message.equalsIgnoreCase("success")) {
-
+                if(message.equalsIgnoreCase("no results")){
+                    Toast.makeText(getActivity(), "Sorry No one is travelling on that date !!!! ", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(getActivity(), "Hola! Many are travelling on that date ", Toast.LENGTH_LONG).show();
                 }
+
+
 
             } catch (JSONException e) {
                 e.printStackTrace();

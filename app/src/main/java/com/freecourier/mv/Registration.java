@@ -77,7 +77,7 @@ public class Registration extends Fragment {
                 args[0] = email.getText().toString().trim();
                 args[1] = name.getText().toString().trim();
 
-                    args[2] = pass.getText().toString().trim();
+                args[2] = pass.getText().toString().trim();
 
                 args[3] = phone.getText().toString().trim();
                 args[5] = dob.getText().toString().trim();

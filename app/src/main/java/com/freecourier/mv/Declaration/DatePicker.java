@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.freecourier.mv.R;
+import com.freecourier.mv.Send_Fragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,7 +24,7 @@ import java.util.Calendar;
 
 public class DatePicker extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
-    View rootview;
+
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -37,11 +39,9 @@ public class DatePicker extends DialogFragment implements DatePickerDialog.OnDat
 
     public void populateSetDate(int year, int month, int day) {
 
-
-
-        Toast.makeText(getActivity(), year+"/"+month+"/"+day, Toast.LENGTH_LONG).show();
-
-
+        TextView tv = (TextView)getFragmentManager().findFragmentById(R.id.container).getView().findViewById(R.id.get_date);
+        tv.setText(year+"-"+month+"-"+day);
+        //Toast.makeText(getActivity(), year+"/"+month+"/"+day, Toast.LENGTH_LONG).show();
 
     }
 

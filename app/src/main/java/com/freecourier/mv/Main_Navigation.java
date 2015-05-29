@@ -1,6 +1,7 @@
 package com.freecourier.mv;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -12,9 +13,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
+import com.facebook.Profile;
+import com.facebook.login.LoginManager;
+import com.freecourier.mv.Declaration.UserSessionManager;
+
+import java.util.HashMap;
+
 
 public class Main_Navigation extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+
+    UserSessionManager session;
+
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -138,8 +148,29 @@ public class Main_Navigation extends ActionBarActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        session = new UserSessionManager(getApplicationContext());
+        if(session.checkLogin())
+            finish();
+
+        // get user data from session
+        HashMap<String, String> user = session.getUserDetails();
+
+        // get name
+        String name = user.get(UserSessionManager.KEY_NAME);
+
+        // get email
+        String email = user.get(UserSessionManager.KEY_EMAIL);
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            session.logoutUser();
+
+            Profile profile = Profile.getCurrentProfile();
+            if(profile.getName()!=null) {
+                LoginManager.getInstance().logOut();
+            }
+
+            Intent intent = new Intent(Main_Navigation.this, MainActivity.class);
+            startActivity(intent);
             return true;
         }
 

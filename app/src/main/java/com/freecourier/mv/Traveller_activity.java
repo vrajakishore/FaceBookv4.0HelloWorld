@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.freecourier.mv.Declaration.ListViewAdapter;
@@ -63,12 +65,20 @@ public class Traveller_activity extends ActionBarActivity {
 
 
         String []argu = new String[3];
-        //argu[0] = bundle.getString("src");
-        //argu[1] = bundle.getString("des");
-        //argu[2] = bundle.getString("jdate");
-        argu[0]="Hyderabad";
-        argu[1]="Kakinada";
-        argu[2]="2015-04-09";
+
+   /*     TextView tv = (TextView)getFragmentManager().findFragmentById(R.id.container).getView().findViewById(R.id.get_date);
+        Spinner s1 = (Spinner)getFragmentManager().findFragmentById(R.id.container).getView().findViewById(R.id.spinner);
+        Spinner s2 = (Spinner)getFragmentManager().findFragmentById(R.id.container).getView().findViewById(R.id.spinner2);
+
+        argu[0]=s1.getSelectedItem().toString();
+        argu[1]=s2.getSelectedItem().toString();
+        argu[2]=tv.getText().toString();  */
+
+        Intent in = getIntent();
+        Bundle bundle = getIntent().getExtras();
+        argu[0] = bundle.getString("src");
+        argu[1] = bundle.getString("des");
+        argu[2] = bundle.getString("jdate");
         Log.d(TAG, argu[0] + " " + " " + argu[1] + " " + argu[2]);
         new RetrieveFeedTask().execute(argu);
     }

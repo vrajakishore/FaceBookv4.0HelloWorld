@@ -15,10 +15,11 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.freecourier.mv.Declaration.TimePicker;
+import com.freecourier.mv.Declaration.UserSessionManager;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -34,19 +35,22 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 public class Carry_Fragment extends Fragment {
     View rootview;
-    public String source1, destination, jdate;
+    public String source1, destination, jdate, jtime;
     private static final String TAG = "CARRY FRAGMENT";
-    static final int DATE_DIALOG_ID = 0;
-    static final int TIME_DIALOG_ID = 1;
+    TextView date_text_view;
+    TextView time_text_view;
 
+
+    UserSessionManager session;
     // variables to save user selected date and time
 
     // declare  the variables to Show/Set the date and time when Time and  Date Picker Dialog first appears
-    private int mYear, mMonth, mDay,mHour,mMinute;
+    private int mYear, mMonth, mDay, mHour, mMinute;
     private DatePicker datePicker;
 
 
@@ -56,7 +60,6 @@ public class Carry_Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.carrier_layout, container, false);
-
 
 
         RetrieveFeedTask obj = new RetrieveFeedTask();
@@ -73,25 +76,22 @@ public class Carry_Fragment extends Fragment {
                 Spinner s_1 = (Spinner) rootview.findViewById(R.id.spinner);
                 Spinner s_2 = (Spinner) rootview.findViewById(R.id.spinner2);
 
-                final String[] args = new String[3];
+                final String[] args = new String[4];
                 args[0] = s_1.getSelectedItem().toString();
                 source1 = args[0];
 
                 args[1] = s_2.getSelectedItem().toString();
                 destination = args[1];
 
-     /*           DatePicker datePicker = (DatePicker) rootview.findViewById(R.id.datePicker);
-                int day = datePicker.getDayOfMonth();
-                int month = datePicker.getMonth() + 1;
-                int year = datePicker.getYear();
+                date_text_view = (TextView) rootview.findViewById(R.id.get_date);
+                args[2] = date_text_view.getText().toString();
 
-                // SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+                time_text_view = (TextView) rootview.findViewById(R.id.get_time);
+                args[3] = time_text_view.getText().toString();
 
-                //args[2] = sdf.format(new Date(calendar.getDate()));
-               // args[2] = year + "/" + month + "/" + day;
-
-                jdate = args[2]; */
-                Log.d(TAG, "Button inside kishore " + source1 + " " + destination + " " + jdate);
+                jdate = args[2];
+                jtime = args[3];
+                Log.d(TAG, "Button inside kishore " + source1 + " " + destination + " " + jdate + " " + jtime);
 
                 //Toast.makeText(getActivity(),"source"+source1+" destination"+destination+" jdate" +jdate,Toast.LENGTH_LONG).show();
                 Fragment fragment = new Fragment();
@@ -104,15 +104,11 @@ public class Carry_Fragment extends Fragment {
 
                 new RetrieveFeedTask2().execute(args);
 
-                Intent intent = new Intent(getActivity(), Traveller_activity.class);
-                startActivity(intent);
 
-                Toast.makeText(getActivity(), "Successfully submitted ", Toast.LENGTH_LONG).show();
 
-                // Log.d(TAG, "Button onclick end   ");
+               // Toast.makeText(getActivity(), "Successfully submitted ", Toast.LENGTH_LONG).show();
+
             }
-
-
         });
 
         ImageView btnNew = (ImageView) rootview.findViewById(R.id.newbutton);
@@ -126,10 +122,6 @@ public class Carry_Fragment extends Fragment {
                 newFragment.show(getFragmentManager(), "DatePicker");
 
             }
-
-
-
-
         });
 
         btnNew1.setOnClickListener(new View.OnClickListener() {
@@ -148,25 +140,40 @@ public class Carry_Fragment extends Fragment {
     }
 
 
-
     class RetrieveFeedTask2 extends AsyncTask<String, Void, String> {
 
         private Exception exception;
 
         @Override
         protected String doInBackground(String[] args) {
+            session = new UserSessionManager(getActivity().getApplicationContext());
+
+            if(session.checkLogin())
+                getActivity().finish();
+
+            // get user data from session
+            HashMap<String, String> user = session.getUserDetails();
+
+            // get name
+            String name = user.get(UserSessionManager.KEY_NAME);
+
+            // get email
+            String session_email = user.get(UserSessionManager.KEY_EMAIL);
+
             DefaultHttpClient client = new DefaultHttpClient();
-            String url = "http://172.16.32.54:8888/rest/user/get_travel_users/";
+            String url = "http://172.16.32.54:8888/rest/user/insert_travel_info/";
             HttpPost request = new HttpPost(url);
             String responseStr = "";
             try {
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
+                nameValuePairs.add(new BasicNameValuePair("lemail", session_email));
                 nameValuePairs.add(new BasicNameValuePair("source", args[0]));
                 nameValuePairs.add(new BasicNameValuePair("des", args[1]));
-                nameValuePairs.add(new BasicNameValuePair("date", args[2]));
+                nameValuePairs.add(new BasicNameValuePair("jd", args[2]));
+                nameValuePairs.add(new BasicNameValuePair("jt", args[3]));
                 request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 HttpResponse response = client.execute(request);
-                Log.d(TAG, "input = " + args[0] + " - " + args[1] + " - " + args[2]);
+                Log.d(TAG, "input = " +session_email+" - "+ args[0] + " - " + args[1] + " - " + args[2]+ " - " + args[3]);
                 responseStr = EntityUtils.toString(response.getEntity());
                 Log.d(TAG, "outcome = " + responseStr);
             } catch (Exception e) {
@@ -185,7 +192,7 @@ public class Carry_Fragment extends Fragment {
                 String message = jsonobj.getString("message");
                 Log.d("error out", "in onPostExecute message : " + message);
                 if (message.equalsIgnoreCase("success")) {
-
+                    Toast.makeText(getActivity(), "You will be notified soon!!!! ", Toast.LENGTH_LONG).show();
                 }
 
             } catch (JSONException e) {

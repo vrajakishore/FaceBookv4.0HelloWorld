@@ -11,7 +11,10 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.freecourier.mv.R;
 
 import java.util.Calendar;
 
@@ -29,7 +32,9 @@ public class TimePicker extends DialogFragment implements TimePickerDialog.OnTim
 
 
     public void populateSetTime(int hour, int minute) {
-        Toast.makeText(getActivity(), hour + " : " + minute + " " , Toast.LENGTH_LONG).show();
+        TextView tt = (TextView)getFragmentManager().findFragmentById(R.id.container).getView().findViewById(R.id.get_time);
+        tt.setText(hour+":"+minute);
+        //Toast.makeText(getActivity(), hour + " : " + minute + " " , Toast.LENGTH_LONG).show();
     }
     @Override
     public void onTimeSet(android.widget.TimePicker view, int hourOfDay, int minute) {

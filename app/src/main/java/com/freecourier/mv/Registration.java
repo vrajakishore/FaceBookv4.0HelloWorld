@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -110,7 +111,8 @@ public class Registration extends Fragment {
         protected String doInBackground(String[] args) {
 
             DefaultHttpClient client = new DefaultHttpClient();
-            String url = "http://172.16.32.54:8888/rest/user/registration/";
+           // String url = "http://172.16.32.54:8888/rest/user/registration/";
+            String url = "http://freecourierservice.appspot.com/rest/user/registration/";
             HttpPost request = new HttpPost(url);
             String responseStr = "";
             try {
@@ -146,16 +148,17 @@ public class Registration extends Fragment {
                 Log.d("error out", "in onPostExecute results123 : " + result);
                 String message = jsonobj.getString("message");
                // Log.d("error out", "in onPostExecute message : " + message);
-                if(message.equalsIgnoreCase("success")){
+                if(message.equals("success")){
                     //Log.d("1111error out", "in onPostExecute message : " + message);
                     Toast.makeText(getActivity(), "Successfully registered", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    startActivity(intent);
 
-
-                }else if(message.equalsIgnoreCase("Already registered")){
+                }else if(message.equals("already registered")){
                     //Log.d("error out", "in onPostExecute message11111 : " + message);
-                    //Intent intent = new Intent(getActivity(), Registration.class);
                     Toast.makeText(getActivity(), "Already registered", Toast.LENGTH_LONG).show();
-                    //startActivity(intent);
+
+
                 }
 
             } catch (JSONException e) {

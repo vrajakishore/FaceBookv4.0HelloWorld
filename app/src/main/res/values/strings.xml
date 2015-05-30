@@ -28,11 +28,11 @@
 
     <string name="title_section1">Send Courier</string>
     <string name="title_section2">Carry Courier</string>
-    <string name="title_section3">Receive Courier</string>
-    <string name="title_section4">History</string>
-    <string name="title_section5">Share Free Courier</string>
-    <string name="title_section6">Contact Us</string>
-    <string name="title_section7">Logout</string>
+
+    <string name="title_section3">History</string>
+    <string name="title_section4">Share Free Courier</string>
+    <string name="title_section5">Contact Us</string>
+
 
 
 

@@ -18,8 +18,10 @@ import android.widget.Toast;
 import com.freecourier.mv.R;
 import com.freecourier.mv.Send_Fragment;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 
 public class DatePicker extends DialogFragment implements DatePickerDialog.OnDateSetListener {
@@ -40,7 +42,13 @@ public class DatePicker extends DialogFragment implements DatePickerDialog.OnDat
     public void populateSetDate(int year, int month, int day) {
 
         TextView tv = (TextView)getFragmentManager().findFragmentById(R.id.container).getView().findViewById(R.id.get_date);
-        tv.setText(year+"-"+month+"-"+day);
+        Date d = new Date(year-1900, month-1, day);
+
+
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        String strDate = dateFormatter.format(d);
+        //tv.setText(year+"-"+month+"-"+day);
+        tv.setText(strDate);
         //Toast.makeText(getActivity(), year+"/"+month+"/"+day, Toast.LENGTH_LONG).show();
 
     }

@@ -237,7 +237,7 @@ public class FragmentSimpleLoginButton extends Fragment {
                     //Toast.makeText(getActivity(), "Successfully registered", Toast.LENGTH_LONG).show();
 
 
-                }else if(message.equalsIgnoreCase("Already registered")){
+                }else if(message.equalsIgnoreCase("already registered")){
                     //Log.d("error out", "in onPostExecute message11111 : " + message);
                     //Intent intent = new Intent(getActivity(), Registration.class);
                     // Toast.makeText(getActivity(), "Already registered", Toast.LENGTH_LONG).show();

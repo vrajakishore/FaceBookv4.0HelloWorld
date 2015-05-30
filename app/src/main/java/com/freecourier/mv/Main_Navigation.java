@@ -65,26 +65,20 @@ public class Main_Navigation extends ActionBarActivity
                 objFragment = new Carry_Fragment();
                 mTitle = "Carry";
                 break;
+
             case 2:
-                objFragment = new Receive_Fragment();
-                break;
-            case 3:
                 objFragment = new History_Fragment();
                 mTitle = "History";
                 break;
-            case 4:
+            case 3:
                 objFragment = new Share_Fragment();
                 mTitle = "Share";
                 break;
-            case 5:
+            case 4:
                 objFragment = new Contact_Fragment();
                 mTitle = "Contact";
                 break;
-            case 6:
-                objFragment = new Logout();
 
-
-                break;
         }
         // update the main content by replacing fragments
         android.app.FragmentManager fragmentManager = getFragmentManager();
@@ -97,7 +91,7 @@ public class Main_Navigation extends ActionBarActivity
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.send_fragment_title);
+                mTitle = getString(R.string.title_section1);
                 break;
             case 2:
                 mTitle = getString(R.string.title_section2);
@@ -111,12 +105,7 @@ public class Main_Navigation extends ActionBarActivity
             case 5:
                 mTitle = getString(R.string.title_section5);
                 break;
-            case 6:
-                mTitle = getString(R.string.title_section6);
-                break;
-            case 7:
-                mTitle = getString(R.string.title_section7);
-                break;
+
         }
     }
 

@@ -1,6 +1,7 @@
 package com.freecourier.mv;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -15,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.freecourier.mv.Declaration.ConnectionDetector;
 import com.freecourier.mv.Declaration.UserSessionManager;
 
 import org.apache.http.HttpResponse;
@@ -36,14 +38,31 @@ import java.util.HashMap;
 
 public class TravellerDetails extends ActionBarActivity {
     private static final String TAG = "TRAVELLER DETAILS PAGE";
+    // flag for Internet connection status
+    Boolean isInternetPresent = false;
 
+    // Connection detector class
+    ConnectionDetector cd;
     UserSessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_traveller_details);
+        isInternetPresent = cd.isConnectingToInternet();
 
+        // check for Internet status
+        if (isInternetPresent) {
+            // Internet Connection is Present
+            // make HTTP requests
+            //     showAlertDialog(MainActivity.this, "Internet Connection",
+            //      "You have internet connection", true);
+        } else {
+            // Internet connection is not present
+            // Ask user to connect to Internet
+            showAlertDialog(TravellerDetails.this, "No Internet Connection",
+                    "You don't have internet connection.", false);
+        }
 
         RetrieveFeedTask obj = new RetrieveFeedTask();
         obj.execute();
@@ -95,7 +114,7 @@ public class TravellerDetails extends ActionBarActivity {
 
             Log.d(TAG, "execute1 "+argu);
             DefaultHttpClient client = new DefaultHttpClient();
-            String url = "http://172.16.32.54:8888/rest/user/get_traveller_details/"+argu;
+            String url = "http://freecourierservice.appspot.com/rest/user/get_traveller_details/"+argu;
             HttpGet request = new HttpGet(url);
             String responseStr = "";
             try {
@@ -185,7 +204,7 @@ public class TravellerDetails extends ActionBarActivity {
 
             Log.d(TAG, "execute1 " + argu);
             DefaultHttpClient client = new DefaultHttpClient();
-            String url = "http://172.16.32.54:8888/rest/user/insert_booking_info/"+email+"/" + argu;
+            String url = "http://freecourierservice.appspot.com/rest/user/insert_booking_info/"+email+"/" + argu;
             HttpGet request = new HttpGet(url);
             String responseStr = "";
             try {
@@ -244,5 +263,34 @@ public class TravellerDetails extends ActionBarActivity {
 
         }
 
+    }
+
+    /**
+     * Function to display simple Alert Dialog
+     * @param context - application context
+     * @param title - alert dialog title
+     * @param message - alert message
+     * @param status - success/failure (used to set icon)
+     * */
+    public void showAlertDialog(Context context, String title, String message, Boolean status) {
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+        // Setting Dialog Title
+        alertDialog.setTitle(title);
+
+        // Setting Dialog Message
+        alertDialog.setMessage(message);
+
+        // Setting alert dialog icon
+        alertDialog.setIcon((status) ? R.mipmap.success : R.mipmap.fail);
+
+        // Setting OK Button
+        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        // Showing Alert Message
+        alertDialog.show();
     }
 }

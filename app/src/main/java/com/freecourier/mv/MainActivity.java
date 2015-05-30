@@ -1,11 +1,14 @@
 package com.freecourier.mv;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,6 +27,7 @@ import android.widget.Toast;
 
 import com.dexafree.materialList.view.MaterialListView;
 
+import com.freecourier.mv.Declaration.ConnectionDetector;
 import com.freecourier.mv.Declaration.UserSessionManager;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -50,7 +54,11 @@ import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
+    // flag for Internet connection status
+    Boolean isInternetPresent = false;
 
+    // Connection detector class
+    ConnectionDetector cd;
 
     FloatingActionsMenu menu;
     MaterialListView cardList;
@@ -76,6 +84,9 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        cd = new ConnectionDetector(getApplicationContext());
+
         mFragmentManager = getSupportFragmentManager();
 
         session = new UserSessionManager(getApplicationContext());
@@ -97,6 +108,21 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 menu.collapse();
+                // get Internet status
+                isInternetPresent = cd.isConnectingToInternet();
+
+                // check for Internet status
+                if (isInternetPresent) {
+                    // Internet Connection is Present
+                    // make HTTP requests
+               //     showAlertDialog(MainActivity.this, "Internet Connection",
+                    //      "You have internet connection", true);
+                } else {
+                    // Internet connection is not present
+                    // Ask user to connect to Internet
+                    showAlertDialog(MainActivity.this, "No Internet Connection",
+                            "You don't have internet connection.", false);
+                }
                 toggleFragment(INDEX_SIMPLE_LOGIN);
             }
         });
@@ -190,7 +216,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected String doInBackground(String[] args) {
             DefaultHttpClient client = new DefaultHttpClient();
-            String url = "http://172.16.32.54:8888/rest/user/login/";
+            String url = "http://freecourierservice.appspot.com/rest/user/login/";
             HttpPost request = new HttpPost(url);
             String responseStr = "";
             try {
@@ -234,6 +260,7 @@ public class MainActivity extends ActionBarActivity {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     Toast.makeText(MainActivity.this,"Welcome user",Toast.LENGTH_LONG).show();
                     startActivity(intent);
+                    finish();
                 }
                 else{
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -242,16 +269,16 @@ public class MainActivity extends ActionBarActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             // do something after confirm
                            // Toast.makeText(MainActivity.this, Selected", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(MainActivity.this, MainActivity.class);
-
-
-                            startActivity(intent);
+                            dialog.cancel();
+                            //Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                            //startActivity(intent);
                         }
                     });
 
                     builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
+                            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                            startActivity(intent);
                         }
                     });
 
@@ -263,6 +290,35 @@ public class MainActivity extends ActionBarActivity {
             }
 
         }
+    }
+
+    /**
+     * Function to display simple Alert Dialog
+     * @param context - application context
+     * @param title - alert dialog title
+     * @param message - alert message
+     * @param status - success/failure (used to set icon)
+     * */
+    public void showAlertDialog(Context context, String title, String message, Boolean status) {
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+        // Setting Dialog Title
+        alertDialog.setTitle(title);
+
+        // Setting Dialog Message
+        alertDialog.setMessage(message);
+
+        // Setting alert dialog icon
+        alertDialog.setIcon((status) ? R.mipmap.success : R.mipmap.fail);
+
+        // Setting OK Button
+        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        // Showing Alert Message
+        alertDialog.show();
     }
 
 }

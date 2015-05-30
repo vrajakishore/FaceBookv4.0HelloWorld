@@ -1,7 +1,10 @@
 package com.freecourier.mv;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.freecourier.mv.Declaration.ConnectionDetector;
 import com.freecourier.mv.Declaration.DatePicker;
 
 import org.apache.http.HttpResponse;
@@ -38,7 +42,11 @@ import java.util.List;
 
 public class Send_Fragment extends Fragment {
     private static final String TAG = "SEND FRAGMENT";
+    // flag for Internet connection status
+    Boolean isInternetPresent = false;
 
+    // Connection detector class
+    ConnectionDetector cd;
     public String source1, destination, jdate;
 
     TextView date_text_view;
@@ -51,6 +59,24 @@ public class Send_Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.send_layout, container, false);
+
+        cd = new ConnectionDetector(rootview.getContext());
+        // get Internet status
+        isInternetPresent = cd.isConnectingToInternet();
+
+        // check for Internet status
+        if (isInternetPresent) {
+            // Internet Connection is Present
+            // make HTTP requests
+            // showAlertDialog(getActivity(), "Internet Connection",
+            //    "You have internet connection", true);
+        } else {
+            // Internet connection is not present
+            // Ask user to connect to Internet
+            showAlertDialog(getActivity(), "No Internet Connection",
+                    "You don't have internet connection.", false);
+        }
+
         RetrieveFeedTask obj = new RetrieveFeedTask();
         obj.execute();
 
@@ -133,7 +159,7 @@ public class Send_Fragment extends Fragment {
         @Override
         protected String doInBackground(String[] args) {
             DefaultHttpClient client = new DefaultHttpClient();
-            String url = "http://172.16.32.54:8888/rest/user/get_travel_users/";
+            String url = "http://freecourierservice.appspot.com/rest/user/get_travel_users/";
             HttpPost request = new HttpPost(url);
             String responseStr = "";
             try {
@@ -191,7 +217,7 @@ public class Send_Fragment extends Fragment {
 
             Log.d(TAG, "execute1");
             DefaultHttpClient client = new DefaultHttpClient();
-            String url = "http://172.16.32.54:8888/rest/user/get_cities/";
+            String url = "http://freecourierservice.appspot.com/rest/user/get_cities/";
             HttpGet request = new HttpGet(url);
             String responseStr = "";
             try {
@@ -251,6 +277,33 @@ public class Send_Fragment extends Fragment {
         }
 
     }
+    /**
+     * Function to display simple Alert Dialog
+     * @param context - application context
+     * @param title - alert dialog title
+     * @param message - alert message
+     * @param status - success/failure (used to set icon)
+     * */
+    public void showAlertDialog(Context context, String title, String message, Boolean status) {
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
 
+        // Setting Dialog Title
+        alertDialog.setTitle(title);
+
+        // Setting Dialog Message
+        alertDialog.setMessage(message);
+
+        // Setting alert dialog icon
+        alertDialog.setIcon((status) ? R.mipmap.success : R.mipmap.fail);
+
+        // Setting OK Button
+        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        // Showing Alert Message
+        alertDialog.show();
+    }
 
 }

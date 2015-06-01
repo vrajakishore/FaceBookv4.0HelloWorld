@@ -35,6 +35,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import dmax.dialog.SpotsDialog;
+
 
 public class TravellerDetails extends ActionBarActivity {
     private static final String TAG = "TRAVELLER DETAILS PAGE";
@@ -49,6 +51,7 @@ public class TravellerDetails extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_traveller_details);
+        cd = new ConnectionDetector(getApplicationContext());
         isInternetPresent = cd.isConnectingToInternet();
 
         // check for Internet status
@@ -63,9 +66,11 @@ public class TravellerDetails extends ActionBarActivity {
             showAlertDialog(TravellerDetails.this, "No Internet Connection",
                     "You don't have internet connection.", false);
         }
-
+        AlertDialog dialog = new SpotsDialog(TravellerDetails.this);
+        dialog.show();
         RetrieveFeedTask obj = new RetrieveFeedTask();
         obj.execute();
+        dialog.dismiss();
     }
 
     @Override
@@ -92,8 +97,11 @@ public class TravellerDetails extends ActionBarActivity {
 
     public void booking(View v){
 
+        AlertDialog dialog = new SpotsDialog(TravellerDetails.this);
+        dialog.show();
         RetrieveFeedTask2 obj1 = new RetrieveFeedTask2();
         obj1.execute();
+        dialog.dismiss();
     }
 
 

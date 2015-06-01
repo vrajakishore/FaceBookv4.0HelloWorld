@@ -2,6 +2,7 @@ package com.freecourier.mv;
 
 
 import android.app.AlertDialog;
+
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -42,6 +43,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+import dmax.dialog.SpotsDialog;
+
 public class Carry_Fragment extends Fragment {
     View rootview;
     public String source1, destination, jdate, jtime;
@@ -70,20 +73,19 @@ public class Carry_Fragment extends Fragment {
 
         // check for Internet status
         if (isInternetPresent) {
-            // Internet Connection is Present
-            // make HTTP requests
-           // showAlertDialog(getActivity(), "Internet Connection",
-                //    "You have internet connection", true);
+
         } else {
-            // Internet connection is not present
-            // Ask user to connect to Internet
+
             showAlertDialog(getActivity(), "No Internet Connection",
                     "You don't have internet connection.", false);
         }
 
+
+        AlertDialog dialog = new SpotsDialog(getActivity());
+        dialog.show();
         RetrieveFeedTask obj = new RetrieveFeedTask();
         obj.execute();
-
+        dialog.dismiss();
 
         Button btnSearch = (Button) rootview.findViewById(R.id.button);
         btnSearch.setOnClickListener(new View.OnClickListener() {
@@ -112,7 +114,6 @@ public class Carry_Fragment extends Fragment {
                 jtime = args[3];
                 Log.d(TAG, "Button inside kishore " + source1 + " " + destination + " " + jdate + " " + jtime);
 
-                //Toast.makeText(getActivity(),"source"+source1+" destination"+destination+" jdate" +jdate,Toast.LENGTH_LONG).show();
                 Fragment fragment = new Fragment();
                 Bundle bundle = new Bundle();
                 bundle.putString("src", args[0]);
@@ -120,14 +121,11 @@ public class Carry_Fragment extends Fragment {
                 bundle.putString("jdate", args[2]);
                 fragment.setArguments(bundle);
 
-
+                AlertDialog dialog = new SpotsDialog(getActivity());
+                dialog.show();
                 new RetrieveFeedTask2().execute(args);
-
-
-
-               // Toast.makeText(getActivity(), "Successfully submitted ", Toast.LENGTH_LONG).show();
-
-            }
+                dialog.dismiss();
+           }
         });
 
         ImageView btnNew = (ImageView) rootview.findViewById(R.id.newbutton);

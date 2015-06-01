@@ -111,18 +111,26 @@
                 </RadioGroup>
 
 
-            <EditText
-                android:id="@+id/dob"
+            <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:ems="10"
-                android:hint="DOB (yyyy-mm-dd)"
-                android:inputType="date" />
+                android:layout_gravity="center_horizontal">
+
+                <EditText
+                    android:id="@+id/dob"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="DOB (yyyy-mm-dd)"
+                    android:inputType="date"
+                    android:layout_weight="1" />
+
+
+            </TableRow>
 
             <EditText
                 android:id="@+id/city"
-                android:layout_width="match_parent"
+                android:layout_width="334dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:hint="City" />

@@ -39,6 +39,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import dmax.dialog.SpotsDialog;
+
 
 public class Send_Fragment extends Fragment {
     private static final String TAG = "SEND FRAGMENT";
@@ -66,20 +68,20 @@ public class Send_Fragment extends Fragment {
 
         // check for Internet status
         if (isInternetPresent) {
-            // Internet Connection is Present
-            // make HTTP requests
-            // showAlertDialog(getActivity(), "Internet Connection",
-            //    "You have internet connection", true);
+
         } else {
-            // Internet connection is not present
-            // Ask user to connect to Internet
+
             showAlertDialog(getActivity(), "No Internet Connection",
                     "You don't have internet connection.", false);
         }
 
+        AlertDialog dialog = new SpotsDialog(getActivity());
+        dialog.show();
+
         RetrieveFeedTask obj = new RetrieveFeedTask();
         obj.execute();
 
+        dialog.dismiss();
 
         Button btnSearch = (Button) rootview.findViewById(R.id.button);
         btnSearch.setOnClickListener(new View.OnClickListener() {
@@ -115,9 +117,11 @@ public class Send_Fragment extends Fragment {
                 fragment.setArguments(bundle);
 
          */
-
+                AlertDialog dialog = new SpotsDialog(getActivity());
+                dialog.show();
                 new RetrieveFeedTask2().execute(args);
 
+                dialog.dismiss();
 
                 Bundle bundle = new Bundle();
                 bundle.putString("src",args[0]);

@@ -8,23 +8,27 @@ import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
+import android.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.freecourier.mv.Declaration.ConnectionDetector;
+import com.freecourier.mv.Declaration.DatePicker;
 import com.freecourier.mv.R;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -43,7 +47,7 @@ public class Registration extends Fragment {
     View rootview;
     private static final String TAG = "REGISTRATION";
 
-    private EditText email;
+    private EditText email,vmail;
     private EditText name;
     private EditText pass;
     private EditText repass;
@@ -54,7 +58,7 @@ public class Registration extends Fragment {
     private RadioButton maleBtn ;
     // flag for Internet connection status
     Boolean isInternetPresent = false;
-
+    String verifymail;
     // Connection detector class
     ConnectionDetector cd;
     @Nullable
@@ -67,13 +71,9 @@ public class Registration extends Fragment {
 
         // check for Internet status
         if (isInternetPresent) {
-            // Internet Connection is Present
-            // make HTTP requests
-            // showAlertDialog(getActivity(), "Internet Connection",
-            //    "You have internet connection", true);
+
         } else {
-            // Internet connection is not present
-            // Ask user to connect to Internet
+
             showAlertDialog(getActivity(), "No Internet Connection",
                     "You don't have internet connection.", false);
         }
@@ -84,43 +84,103 @@ public class Registration extends Fragment {
 
             public void onClick(View v) {
 
+                AlertDialog dialog = new SpotsDialog(getActivity());
+                dialog.show();
 
-                email = (EditText) rootview.findViewById(R.id.username);
-                name = (EditText) rootview.findViewById(R.id.name);
-                pass = (EditText) rootview.findViewById(R.id.password);
-                repass = (EditText) rootview.findViewById(R.id.repass);
-                phone = (EditText) rootview.findViewById(R.id.phone);
-                dob = (EditText) rootview.findViewById(R.id.dob);
-                femaleBtn = (RadioButton) rootview.findViewById(R.id.gender_female);
-                maleBtn = (RadioButton) rootview.findViewById(R.id.gender_male);
+                Verification vobj = new Verification();
+                vobj.execute();
 
-                city = (EditText) rootview.findViewById(R.id.city);
-                String[] args = new String[7];
+                dialog.dismiss();
 
-                args[0] = email.getText().toString().trim();
-                args[1] = name.getText().toString().trim();
-
-                args[2] = pass.getText().toString().trim();
-
-                args[3] = phone.getText().toString().trim();
-                args[5] = dob.getText().toString().trim();
-
-                if(femaleBtn.isChecked()) {
-                    args[4] = "female";
-                } else if(maleBtn.isChecked()) {
-                    args[4] = "male";
-                }
-
-                args[6] = city.getText().toString().trim();
-
-                new RetrieveFeedTask().execute(args);
-
-                //Toast.makeText(getActivity(), "Successfully submitted ", Toast.LENGTH_LONG).show();
-                // Log.d(TAG, "Button onclick end   ");
             }
         });
 
         return rootview;
+    }
+
+
+    class Verification extends AsyncTask<String, Void, String> {
+
+        private Exception exception;
+
+        @Override
+        protected String doInBackground(String[] args) {
+            vmail = (EditText) rootview.findViewById(R.id.username);
+            verifymail = vmail.getText().toString().trim();
+
+            Log.d(TAG, "execute1 "+verifymail);
+            DefaultHttpClient client = new DefaultHttpClient();
+            String url = "http://freecourierservice.appspot.com/rest/user/verification/"+verifymail;
+            HttpGet request = new HttpGet(url);
+            String responseStr = "";
+            try {
+
+                HttpResponse response = client.execute(request);
+                responseStr = EntityUtils.toString(response.getEntity());
+                Log.d(TAG, "outcome = " + responseStr);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return "[" + responseStr + "]";
+        }
+
+        protected void onPostExecute(String result) {
+            // TODO: check this.exception
+            // TODO: do something with the feed
+            try {
+                JSONArray json = new JSONArray( result);
+
+                JSONObject jsonobj = json.getJSONObject(0);
+                Log.d("error out", "in onPostExecute results123 : " + result);
+                String message = jsonobj.getString("message");
+
+                if(message.equals("link_sent")){
+
+                    Toast.makeText(getActivity(), "Activation link has been sent to your mail!", Toast.LENGTH_LONG).show();
+
+                    email = (EditText) rootview.findViewById(R.id.username);
+                    name = (EditText) rootview.findViewById(R.id.name);
+                    pass = (EditText) rootview.findViewById(R.id.password);
+                    repass = (EditText) rootview.findViewById(R.id.repass);
+                    phone = (EditText) rootview.findViewById(R.id.phone);
+                    dob = (EditText) rootview.findViewById(R.id.dob);
+                    femaleBtn = (RadioButton) rootview.findViewById(R.id.gender_female);
+                    maleBtn = (RadioButton) rootview.findViewById(R.id.gender_male);
+                    city = (EditText) rootview.findViewById(R.id.city);
+
+
+                    String[] args = new String[7];
+                    args[0] = email.getText().toString().trim();
+                    args[1] = name.getText().toString().trim();
+                    args[2] = pass.getText().toString().trim();
+                    args[3] = phone.getText().toString().trim();
+                    args[5] = dob.getText().toString().trim();
+
+                    if(femaleBtn.isChecked()) {
+                        args[4] = "female";
+                    } else if(maleBtn.isChecked()) {
+                        args[4] = "male";
+                    }
+
+                    args[6] = city.getText().toString().trim();
+
+                    new RetrieveFeedTask().execute(args);
+
+
+
+                }else if(message.equals("link_failed")){
+                    //Log.d("error out", "in onPostExecute message11111 : " + message);
+                    Toast.makeText(getActivity(), "Try Again!!!!", Toast.LENGTH_LONG).show();
+
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
     }
 
     class RetrieveFeedTask extends AsyncTask<String, Void, String> {

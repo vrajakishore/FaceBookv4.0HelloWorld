@@ -65,14 +65,12 @@ public class Traveller_activity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_traveller);
 
+        cd = new ConnectionDetector(getApplicationContext());
         isInternetPresent = cd.isConnectingToInternet();
 
         // check for Internet status
         if (isInternetPresent) {
-            // Internet Connection is Present
-            // make HTTP requests
-            //     showAlertDialog(MainActivity.this, "Internet Connection",
-            //      "You have internet connection", true);
+
         } else {
             // Internet connection is not present
             // Ask user to connect to Internet

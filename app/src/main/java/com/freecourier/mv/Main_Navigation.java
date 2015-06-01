@@ -151,13 +151,15 @@ public class Main_Navigation extends ActionBarActivity
         String email = user.get(UserSessionManager.KEY_EMAIL);
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            session.logoutUser();
 
-            Profile profile = Profile.getCurrentProfile();
-            if(profile.getName()!=null) {
-                LoginManager.getInstance().logOut();
+            if(email!=null){
+                session.logoutUser();}
+            else {
+                Profile profile = Profile.getCurrentProfile();
+                if (profile.getName() != null) {
+                    LoginManager.getInstance().logOut();
+                }
             }
-
             Intent intent = new Intent(Main_Navigation.this, MainActivity.class);
             startActivity(intent);
             return true;

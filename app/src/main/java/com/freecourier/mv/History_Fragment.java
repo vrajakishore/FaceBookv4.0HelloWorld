@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import dmax.dialog.SpotsDialog;
+
 import static com.freecourier.mv.Declaration.Constant_History.EIGHTH_COLUMN;
 import static com.freecourier.mv.Declaration.Constant_History.FIRST_COLUMN;
 import static com.freecourier.mv.Declaration.Constant_History.FOURTH_COLUMN;
@@ -79,10 +81,11 @@ public class History_Fragment extends Fragment {
             showAlertDialog(getActivity(), "No Internet Connection",
                     "You don't have internet connection.", false);
         }
-
+        AlertDialog dialog = new SpotsDialog(getActivity());
+        dialog.show();
         RetrieveFeedTask2 obj1 = new RetrieveFeedTask2();
         obj1.execute();
-
+        dialog.dismiss();
 
         return rootview;
 

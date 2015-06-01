@@ -52,6 +52,8 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
+import dmax.dialog.SpotsDialog;
+
 
 public class MainActivity extends ActionBarActivity {
     // flag for Internet connection status
@@ -84,6 +86,13 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if((getIntent().getFlags()& Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            // Here activity is brought to front, not created,
+            // so finishing this will get you to the last viewed activity
+            finish();
+            return;
+        }
 
         cd = new ConnectionDetector(getApplicationContext());
 
@@ -158,8 +167,10 @@ public class MainActivity extends ActionBarActivity {
 
         args[1] = password.getText().toString().trim();
 
+        AlertDialog dialog = new SpotsDialog(MainActivity.this);
+        dialog.show();
         new RetrieveFeedTask().execute(args);
-
+        dialog.dismiss();
 
     }
 
@@ -171,18 +182,13 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
 
         if (id == R.id.action_simple_login) {
             toggleFragment(INDEX_SIMPLE_LOGIN);
             return true;
         }
-        if (id == R.id.action_custom_login) {
-            toggleFragment(INDEX_CUSTOM_LOGIN);
-            return true;
-        }
+
         if (id == R.id.action_signup) {
             toggleFragment(INDEX_SIGNUP);
             return true;
@@ -198,9 +204,7 @@ public class MainActivity extends ActionBarActivity {
             case INDEX_SIMPLE_LOGIN:
                 transaction.replace(android.R.id.content, new FragmentSimpleLoginButton(),FRAGMENT_TAG);
                 break;
-            case INDEX_CUSTOM_LOGIN:
-                transaction.replace(android.R.id.content, new FragmentCustomLoginButton(),FRAGMENT_TAG);
-                break;
+
             case INDEX_SIGNUP:
                 transaction.replace(android.R.id.content, new Registration(),FRAGMENT_TAG);
                 break;

@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -162,16 +163,28 @@ public class MainActivity extends ActionBarActivity {
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
         String []args = new String[2];
-        args[0] = username.getText().toString().trim();
-
+        int flag;
+        if(isValidEmail(username.getText().toString().trim())){
+            args[0] = username.getText().toString().trim();
+            flag=1;
+        }else{
+            username.setError("Invalid");
+            username.requestFocus();
+            flag=0;
+        }
 
         args[1] = password.getText().toString().trim();
 
-        AlertDialog dialog = new SpotsDialog(MainActivity.this);
-        dialog.show();
-        new RetrieveFeedTask().execute(args);
-        dialog.dismiss();
+        if(flag==1) {
+            AlertDialog dialog = new SpotsDialog(MainActivity.this);
+            dialog.show();
+            new RetrieveFeedTask().execute(args);
+            dialog.dismiss();
+        }
+    }
 
+    public final static boolean isValidEmail(CharSequence target) {
+        return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
     @Override

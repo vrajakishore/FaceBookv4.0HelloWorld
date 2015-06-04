@@ -60,16 +60,6 @@ public class FragmentSimpleLoginButton extends Fragment {
             AccessToken accessToken = loginResult.getAccessToken();
             Profile profile = Profile.getCurrentProfile();
             mTextDetails.setText(constructWelcomeMessage(profile));
-
-
-
-
-            String[] arg = new String[7];
-            arg[0] = profile.getId();
-            arg[1] = profile.getName();
-            new RetrieveFeedTask().execute(arg);
-
-
         }
 
 
@@ -183,75 +173,6 @@ public class FragmentSimpleLoginButton extends Fragment {
         }
         return stringBuffer.toString();
     }
-
-
-
-    class RetrieveFeedTask extends AsyncTask<String, Void, String> {
-
-        private Exception exception;
-
-
-
-        @Override
-        protected String doInBackground(String[] args) {
-
-            DefaultHttpClient client = new DefaultHttpClient();
-            String url = "http://172.16.32.54:8888/rest/user/registration/";
-            HttpPost request = new HttpPost(url);
-            String responseStr = "";
-            try {
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(6);
-                nameValuePairs.add(new BasicNameValuePair("email", args[0]));
-                nameValuePairs.add(new BasicNameValuePair("fullname", args[1]));
-                nameValuePairs.add(new BasicNameValuePair("pwd", args[2]));
-                nameValuePairs.add(new BasicNameValuePair("phone", args[3]));
-                nameValuePairs.add(new BasicNameValuePair("gender", args[4]));
-                nameValuePairs.add(new BasicNameValuePair("dob", args[5]));
-                nameValuePairs.add(new BasicNameValuePair("city", args[6]));
-
-
-                request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-                HttpResponse response = client.execute(request);
-                //Log.d(TAG, "input = " + args[0]+" - "+args[1]+" - "+args[2]+" - "+args[3]+" - "+args[4]+" - "+args[5]+" - "+args[6]);
-                responseStr = EntityUtils.toString(response.getEntity());
-               // Log.d(TAG, "outcome = " + responseStr);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-            return "["+responseStr+"]";
-        }
-
-        protected void onPostExecute(String result) {
-            // TODO: check this.exception
-            // TODO: do something with the feed
-            try {
-                JSONArray json = new JSONArray( result);
-
-                JSONObject jsonobj = json.getJSONObject(0);
-                Log.d("error out", "in onPostExecute results123 : " + result);
-                String message = jsonobj.getString("message");
-                // Log.d("error out", "in onPostExecute message : " + message);
-                if(message.equalsIgnoreCase("success")){
-                    //Log.d("1111error out", "in onPostExecute message : " + message);
-                    //Toast.makeText(getActivity(), "Successfully registered", Toast.LENGTH_LONG).show();
-
-
-                }else if(message.equalsIgnoreCase("already registered")){
-                    //Log.d("error out", "in onPostExecute message11111 : " + message);
-                    //Intent intent = new Intent(getActivity(), Registration.class);
-                    // Toast.makeText(getActivity(), "Already registered", Toast.LENGTH_LONG).show();
-                    //startActivity(intent);
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
-
 
 }
 

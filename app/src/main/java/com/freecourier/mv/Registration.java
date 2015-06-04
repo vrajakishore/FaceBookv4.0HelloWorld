@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.app.FragmentManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,6 +62,7 @@ public class Registration extends Fragment {
     String verifymail;
     // Connection detector class
     ConnectionDetector cd;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -84,11 +86,66 @@ public class Registration extends Fragment {
 
             public void onClick(View v) {
 
+
+                int flag;
                 AlertDialog dialog = new SpotsDialog(getActivity());
                 dialog.show();
+                email = (EditText) rootview.findViewById(R.id.username);
+                name = (EditText) rootview.findViewById(R.id.name);
+                pass = (EditText) rootview.findViewById(R.id.password);
+                repass = (EditText) rootview.findViewById(R.id.repass);
+                phone = (EditText) rootview.findViewById(R.id.phone);
+                dob = (EditText) rootview.findViewById(R.id.dob);
+                femaleBtn = (RadioButton) rootview.findViewById(R.id.gender_female);
+                maleBtn = (RadioButton) rootview.findViewById(R.id.gender_male);
+                city = (EditText) rootview.findViewById(R.id.city);
 
-                Verification vobj = new Verification();
-                vobj.execute();
+                if(isValidEmail(email.getText().toString().trim())){
+                    flag = 1;
+                }else{
+                   email.setError("Invalid");
+                   email.requestFocus();
+                   flag = 0;
+                }
+
+                if(name.getText().toString().trim().equals("")){
+                    name.setError("Cannot be blank");
+                    name.requestFocus();
+                    flag = 0;
+                }
+
+                if(dob.getText().toString().trim().equals("")){
+                    dob.setError("Invalid Date");
+                    dob.requestFocus();
+                    flag = 0;
+                }
+
+                if(city.getText().toString().trim().equals("")){
+                    city.setError("Field cannot be blank");
+                    city.requestFocus();
+                    flag = 0;
+                }
+
+                if(validCellPhone(phone.getText().toString().trim())){
+                    flag = 2;
+                }else{
+                    phone.setError("Invalid");
+                    phone.requestFocus();
+                    flag = 0;
+                }
+
+                if(pass.getText().toString().trim().equals(repass.getText().toString().trim())){
+                    flag = 3;
+                }else{
+                    repass.setError("They should match");
+                    repass.requestFocus();
+                    flag = 0;
+                }
+
+                if(flag!=0){
+                    Verification vobj = new Verification();
+                    vobj.execute();
+                }
 
                 dialog.dismiss();
 
@@ -106,23 +163,30 @@ public class Registration extends Fragment {
         @Override
         protected String doInBackground(String[] args) {
             vmail = (EditText) rootview.findViewById(R.id.username);
+
             verifymail = vmail.getText().toString().trim();
 
-            Log.d(TAG, "execute1 "+verifymail);
+            Log.d(TAG, "execute1 " + verifymail);
             DefaultHttpClient client = new DefaultHttpClient();
-            String url = "http://freecourierservice.appspot.com/rest/user/verification/"+verifymail;
-            HttpGet request = new HttpGet(url);
-            String responseStr = "";
-            try {
 
-                HttpResponse response = client.execute(request);
-                responseStr = EntityUtils.toString(response.getEntity());
-                Log.d(TAG, "outcome = " + responseStr);
-            } catch (Exception e) {
-                e.printStackTrace();
+
+
+
+                String url = "http://freecourierservice.appspot.com/rest/user/verification/" + verifymail;
+                HttpGet request = new HttpGet(url);
+                String responseStr = "";
+                try {
+
+                    HttpResponse response = client.execute(request);
+                    responseStr = EntityUtils.toString(response.getEntity());
+                    Log.d(TAG, "outcome = " + responseStr);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return "[" + responseStr + "]";
             }
-            return "[" + responseStr + "]";
-        }
+
 
         protected void onPostExecute(String result) {
             // TODO: check this.exception
@@ -150,10 +214,14 @@ public class Registration extends Fragment {
 
 
                     String[] args = new String[7];
+
                     args[0] = email.getText().toString().trim();
+
+
                     args[1] = name.getText().toString().trim();
                     args[2] = pass.getText().toString().trim();
                     args[3] = phone.getText().toString().trim();
+
                     args[5] = dob.getText().toString().trim();
 
                     if(femaleBtn.isChecked()) {
@@ -163,7 +231,6 @@ public class Registration extends Fragment {
                     }
 
                     args[6] = city.getText().toString().trim();
-
                     new RetrieveFeedTask().execute(args);
 
 
@@ -181,6 +248,14 @@ public class Registration extends Fragment {
         }
 
 
+    }
+
+    public final static boolean isValidEmail(CharSequence target) {
+        return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
+    public boolean validCellPhone(String number)
+    {
+        return android.util.Patterns.PHONE.matcher(number).matches();
     }
 
     class RetrieveFeedTask extends AsyncTask<String, Void, String> {

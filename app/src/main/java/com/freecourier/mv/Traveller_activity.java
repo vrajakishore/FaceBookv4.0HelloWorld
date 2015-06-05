@@ -80,13 +80,7 @@ public class Traveller_activity extends ActionBarActivity {
 
         String []argu = new String[3];
 
-   /*     TextView tv = (TextView)getFragmentManager().findFragmentById(R.id.container).getView().findViewById(R.id.get_date);
-        Spinner s1 = (Spinner)getFragmentManager().findFragmentById(R.id.container).getView().findViewById(R.id.spinner);
-        Spinner s2 = (Spinner)getFragmentManager().findFragmentById(R.id.container).getView().findViewById(R.id.spinner2);
 
-        argu[0]=s1.getSelectedItem().toString();
-        argu[1]=s2.getSelectedItem().toString();
-        argu[2]=tv.getText().toString();  */
 
         Intent in = getIntent();
         Bundle bundle = getIntent().getExtras();

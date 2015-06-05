@@ -52,6 +52,8 @@ import java.net.URISyntaxException;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import dmax.dialog.SpotsDialog;
 
@@ -76,7 +78,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     public static final int INDEX_SIMPLE_LOGIN = 0;
-    public static final int INDEX_CUSTOM_LOGIN = 1;
+
     public static final int INDEX_SIGNUP = 2;
 
     private static final String STATE_SELECTED_FRAGMENT_INDEX = "selected_fragment_index";
@@ -88,7 +90,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if((getIntent().getFlags()& Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
             // Here activity is brought to front, not created,
             // so finishing this will get you to the last viewed activity
             finish();
@@ -102,18 +104,16 @@ public class MainActivity extends ActionBarActivity {
         session = new UserSessionManager(getApplicationContext());
 
 
-
-
-        cardList = (MaterialListView)findViewById(R.id.cardList);
+        cardList = (MaterialListView) findViewById(R.id.cardList);
         cardList.getLayoutManager().offsetChildrenVertical(30);
-        menu = (FloatingActionsMenu)findViewById(R.id.fab1);
+        menu = (FloatingActionsMenu) findViewById(R.id.fab1);
 
-        ActionBar ab=getSupportActionBar();
-        Resources r=getResources();
-        Drawable d=r.getDrawable(R.color.royalBlue);
+        ActionBar ab = getSupportActionBar();
+        Resources r = getResources();
+        Drawable d = r.getDrawable(R.color.royalBlue);
         ab.setBackgroundDrawable(d);
 
-        FloatingActionButton fare = (FloatingActionButton)findViewById(R.id.login);
+        FloatingActionButton fare = (FloatingActionButton) findViewById(R.id.login);
         fare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,7 +125,7 @@ public class MainActivity extends ActionBarActivity {
                 if (isInternetPresent) {
                     // Internet Connection is Present
                     // make HTTP requests
-               //     showAlertDialog(MainActivity.this, "Internet Connection",
+                    //     showAlertDialog(MainActivity.this, "Internet Connection",
                     //      "You have internet connection", true);
                 } else {
                     // Internet connection is not present
@@ -136,7 +136,7 @@ public class MainActivity extends ActionBarActivity {
                 toggleFragment(INDEX_SIMPLE_LOGIN);
             }
         });
-        FloatingActionButton time = (FloatingActionButton)findViewById(R.id.adduser);
+        FloatingActionButton time = (FloatingActionButton) findViewById(R.id.adduser);
         time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,27 +160,29 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void send_to_menu(View view) {
+        AlertDialog dialog = new SpotsDialog(MainActivity.this);
+        dialog.show();
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
-        String []args = new String[2];
+        String[] args = new String[2];
         int flag;
-        if(isValidEmail(username.getText().toString().trim())){
+        if (isValidEmail(username.getText().toString().trim())) {
             args[0] = username.getText().toString().trim();
-            flag=1;
-        }else{
+            flag = 1;
+        } else {
             username.setError("Invalid");
             username.requestFocus();
-            flag=0;
+            flag = 0;
         }
 
         args[1] = password.getText().toString().trim();
 
-        if(flag==1) {
-            AlertDialog dialog = new SpotsDialog(MainActivity.this);
-            dialog.show();
+        if (flag == 1) {
+
             new RetrieveFeedTask().execute(args);
-            dialog.dismiss();
+
         }
+        dialog.dismiss();
     }
 
     public final static boolean isValidEmail(CharSequence target) {
@@ -213,13 +215,13 @@ public class MainActivity extends ActionBarActivity {
     private void toggleFragment(int index) {
         Fragment fragment = mFragmentManager.findFragmentByTag(FRAGMENT_TAG);
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        switch (index){
+        switch (index) {
             case INDEX_SIMPLE_LOGIN:
-                transaction.replace(android.R.id.content, new FragmentSimpleLoginButton(),FRAGMENT_TAG);
+                transaction.replace(android.R.id.content, new FragmentSimpleLoginButton(), FRAGMENT_TAG);
                 break;
 
             case INDEX_SIGNUP:
-                transaction.replace(android.R.id.content, new Registration(),FRAGMENT_TAG);
+                transaction.replace(android.R.id.content, new Registration(), FRAGMENT_TAG);
                 break;
         }
         transaction.commit();
@@ -242,27 +244,26 @@ public class MainActivity extends ActionBarActivity {
                 nameValuePairs.add(new BasicNameValuePair("password", args[1]));
                 request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 HttpResponse response = client.execute(request);
-                Log.d(TAG, "input = " + args[0]+" - "+args[1]);
+                Log.d(TAG, "input = " + args[0] + " - " + args[1]);
 
                 responseStr = EntityUtils.toString(response.getEntity());
                 Log.d(TAG, "outcome = " + responseStr);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            return "["+responseStr+"]";
+            return "[" + responseStr + "]";
         }
 
         protected void onPostExecute(String result) {
             // TODO: check this.exception
             // TODO: do something with the feed
             try {
-                JSONArray json = new JSONArray( result);
+                JSONArray json = new JSONArray(result);
                 //Log.d("error out", "in onPostExecute results123 : " + result);
                 JSONObject jsonobj = json.getJSONObject(0);
                 String message = jsonobj.getString("message");
                 Log.d("error out", "in onPostExecute message : " + message);
-                if(message.equalsIgnoreCase("success")){
+                if (message.equalsIgnoreCase("success")) {
 
                     username = (EditText) findViewById(R.id.username);
                     String email = username.getText().toString().trim();
@@ -275,17 +276,16 @@ public class MainActivity extends ActionBarActivity {
 
                     // Add new Flag to start new Activity
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    Toast.makeText(MainActivity.this,"Welcome user",Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Welcome user", Toast.LENGTH_LONG).show();
                     startActivity(intent);
                     finish();
-                }
-                else{
+                } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setMessage("Username or Password is wrong!!! Try again?");
                     builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // do something after confirm
-                           // Toast.makeText(MainActivity.this, Selected", Toast.LENGTH_SHORT).show();
+                            // Toast.makeText(MainActivity.this, Selected", Toast.LENGTH_SHORT).show();
                             dialog.cancel();
                             //Intent intent = new Intent(MainActivity.this, MainActivity.class);
                             //startActivity(intent);
@@ -311,11 +311,12 @@ public class MainActivity extends ActionBarActivity {
 
     /**
      * Function to display simple Alert Dialog
+     *
      * @param context - application context
-     * @param title - alert dialog title
+     * @param title   - alert dialog title
      * @param message - alert message
-     * @param status - success/failure (used to set icon)
-     * */
+     * @param status  - success/failure (used to set icon)
+     */
     public void showAlertDialog(Context context, String title, String message, Boolean status) {
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
 
@@ -339,4 +340,3 @@ public class MainActivity extends ActionBarActivity {
     }
 
 }
-

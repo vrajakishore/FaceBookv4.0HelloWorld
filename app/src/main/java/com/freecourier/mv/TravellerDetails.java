@@ -34,6 +34,9 @@ import org.json.JSONObject;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import dmax.dialog.SpotsDialog;
 
@@ -46,6 +49,8 @@ public class TravellerDetails extends ActionBarActivity {
     // Connection detector class
     ConnectionDetector cd;
     UserSessionManager session;
+    private static boolean running = false;
+    Timer myTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +77,7 @@ public class TravellerDetails extends ActionBarActivity {
         obj.execute();
         dialog.dismiss();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -195,7 +201,7 @@ public class TravellerDetails extends ActionBarActivity {
 
             session = new UserSessionManager(getApplicationContext());
 
-            if(session.checkLogin())
+            if (session.checkLogin())
                 finish();
 
             // get user data from session
@@ -208,11 +214,11 @@ public class TravellerDetails extends ActionBarActivity {
             String email = user.get(UserSessionManager.KEY_EMAIL);
 
 
-            Log.d(TAG, "session = " +name+" "+email);
+            Log.d(TAG, "session = " + name + " " + email);
 
             Log.d(TAG, "execute1 " + argu);
             DefaultHttpClient client = new DefaultHttpClient();
-            String url = "http://freecourierservice.appspot.com/rest/user/insert_booking_info/"+email+"/" + argu;
+            String url = "http://freecourierservice.appspot.com/rest/user/insert_booking_info/" + email + "/" + argu;
             HttpGet request = new HttpGet(url);
             String responseStr = "";
             try {
@@ -242,27 +248,36 @@ public class TravellerDetails extends ActionBarActivity {
 
                 final String bookingID = travellerDetails.get(0);
 
-                if(bookingID.equals("fail")){
+                if (bookingID.equals("fail")) {
 
-                   // Log.d("EPUDAINA  : ", "i + "  + " val : " + bookingID);
                     AlertDialog.Builder builder = new AlertDialog.Builder(TravellerDetails.this);
                     builder.setMessage("This person is already selected\nSelect someone else....");
                     builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
-                           /* Intent intent = new Intent(TravellerDetails.this, Traveller_activity.class);
-                            startActivity(intent); */
-                        }
+                            }
                     });
-                  /*  builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    }); */
-
                     builder.create().show();
-                }else{
+                } else {
                     Toast.makeText(TravellerDetails.this, "Booking Confirmed with ID " + bookingID, Toast.LENGTH_SHORT).show();
+
+                    session = new UserSessionManager(getApplicationContext());
+
+                    if (session.checkLogin())
+                        finish();
+
+                    // get user data from session
+                    HashMap<String, String> user = session.getUserDetails();
+
+                    // get name
+                    String name = user.get(UserSessionManager.KEY_NAME);
+
+                    // get email
+                    String email = user.get(UserSessionManager.KEY_EMAIL);
+                    String[] args = new String[2];
+                    args[0] = email;
+                    args[1] = bookingID;
+                    new BookServerRequest().execute(args);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -271,6 +286,85 @@ public class TravellerDetails extends ActionBarActivity {
 
         }
 
+
+        class BookServerRequest extends AsyncTask<String, Void, String> {
+
+            private Exception exception;
+            private ArrayList<String> BookRequest;
+
+            public BookServerRequest() {
+                BookRequest = new ArrayList<String>();
+            }
+
+            @Override
+            protected String doInBackground(String[] args) {
+
+                DefaultHttpClient client = new DefaultHttpClient();
+                String url = "http://freecourierservice.appspot.com/rest/user/booking_notification/";
+                HttpPost request = new HttpPost(url);
+                String responseStr = "";
+                try {
+                    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+                    nameValuePairs.add(new BasicNameValuePair("email_id", args[0]));
+                    nameValuePairs.add(new BasicNameValuePair("booking_id", args[1]));
+                    request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                    HttpResponse response = client.execute(request);
+                    Log.d("Notification", "input = " + args[0] + " - " + args[1]);
+
+                    responseStr = EntityUtils.toString(response.getEntity());
+                    Log.d("Notification", "outcome = " + responseStr);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return "[" + responseStr + "]";
+            }
+
+            protected void onPostExecute(String result) {
+                // TODO: check this.exception
+                // TODO: do something with the feed
+                try {
+                    JSONArray json = new JSONArray(result);
+
+                    JSONObject jsonobj = json.getJSONObject(0);
+                    for (int i = 0; i < jsonobj.names().length(); i++) {
+                        String key = (String) jsonobj.names().get(i);
+                        String val = jsonobj.getString(key);
+                        BookRequest.add(val);
+                        Log.d("error out - Element : ", "i + " + i + " val : " + val);
+                    }
+
+                    final String bookingID = BookRequest.get(0);
+
+                    if (bookingID.equals("fail")) {
+
+                        // Log.d("EPUDAINA  : ", "i + "  + " val : " + bookingID);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(TravellerDetails.this);
+                        builder.setMessage("This person is already selected\nSelect someone else....");
+                        builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                           /* Intent intent = new Intent(TravellerDetails.this, Traveller_activity.class);
+                            startActivity(intent); */
+                            }
+                        });
+                  /*  builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    }); */
+
+                        builder.create().show();
+                    } else {
+                        Toast.makeText(TravellerDetails.this, "Booking Confirmed with ID " + bookingID, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+
+        }
     }
 
     /**

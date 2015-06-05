@@ -1,30 +1,54 @@
 package com.freecourier.mv;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.AsyncTask;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
+import android.widget.Toast;
 
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.freecourier.mv.Declaration.UserSessionManager;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class Main_Navigation extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
+    private static final String TAG = "MAIN NAVIGATION PAGE";
     UserSessionManager session;
-
+    Context context;
+    private ArrayList<HashMap<String, String>> list;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -35,6 +59,8 @@ public class Main_Navigation extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+    private static boolean running = false;
+    Timer myTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +75,137 @@ public class Main_Navigation extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        MyTimerTask myTask = new MyTimerTask();
+        myTimer = new Timer();
+        myTimer.schedule(myTask, 0, 20000);
+    }
+
+    private class MyTimerTask extends TimerTask {
+        public void run() {
+            if(!running){
+                Log.i("TAG", "NEW TIMER STARTED.");
+                RetrieveServerRequest task = new RetrieveServerRequest();
+                task.execute();
+                running = true;
+            }else{
+                running = false;
+            }
+        }
+    }
+
+    class RetrieveServerRequest extends AsyncTask<String, Void, String> {
+
+        private Exception exception;
+        //private ArrayList<String> senderNotification;
+
+       // public RetrieveServerRequest() {
+            //senderNotification = new ArrayList<String>();
+       // }
+       public RetrieveServerRequest() {
+           list=new ArrayList<HashMap<String,String>>();
+       }
+
+        @Override
+        protected String doInBackground(String[] args) {
+
+            session = new UserSessionManager(getApplicationContext());
+
+            if(session.checkLogin())
+                finish();
+
+            // get user data from session
+            HashMap<String, String> user = session.getUserDetails();
+
+            // get name
+            String name = user.get(UserSessionManager.KEY_NAME);
+
+            // get email
+            String email = user.get(UserSessionManager.KEY_EMAIL);
+
+
+            Log.d(TAG, "session = " +name+" "+email);
+
+            DefaultHttpClient client = new DefaultHttpClient();
+            String url = "http://freecourierservice.appspot.com/rest/user/get_booking_notification/"+email;
+            HttpGet request = new HttpGet(url);
+            String responseStr = "";
+            try {
+                HttpResponse response = client.execute(request);
+                responseStr = EntityUtils.toString(response.getEntity());
+                Log.d(TAG, "outcome = " + responseStr);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return "[" + responseStr + "]";
+        }
+
+        protected void onPostExecute(String result) {
+            // TODO: check this.exception
+            // TODO: do something with the feed
+            try {
+                JSONArray json = new JSONArray(result);
+
+                JSONObject jsonobj = json.getJSONObject(0);
+                for (int i = 0; i < jsonobj.names().length(); i++) {
+                    HashMap<String,String> temp = new HashMap<String, String>();
+                    String key = (String) jsonobj.names().get(i);
+                    String val = jsonobj.getString(key);
+                    JSONArray json1 = new JSONArray("["+val+"]");
+                    JSONObject jsonobj1 = json1.getJSONObject(0);
+                    String[] args = new String[3];
+                    val = jsonobj1.getString("booking_id");
+                    temp.put("booking_id",val);
+                    args[0] = temp.get("booking_id");
+
+                    val = jsonobj1.getString("sender_name");
+                    temp.put("sender_name",val);
+                    args[1] = temp.get("sender_name");
+
+                    val = jsonobj1.getString("sender_phone");
+                    temp.put("sender_phone",val);
+                    args[2] = temp.get("sender_phone");
+
+                    list.add(temp);
+
+                    Log.d("error out - Element : ", "i + " + i + args[0]+args[1]+args[2]);
+
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Main_Navigation.this);
+                    builder.setMessage(args[1]+" selected you to carry his parcel \nBooking ID: "+args[0]+"\n Phone No: "+args[2]);
+                    builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.create().show();
+                    //createNotification(args[0],args[1],args[2]);
+                }
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void createNotification(String Id, String name, String phone) {
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context);
+        notificationBuilder.setAutoCancel(true).setDefaults(Notification.DEFAULT_ALL);
+        notificationBuilder
+                .setContentText(Id)
+                .setContentTitle(String.format("Someone selected you!!"))
+                .setSmallIcon(R.drawable.ic_stat_action_room)
+                .setColor(Color.argb(0x55, 0x00, 0x00, 0xff))
+                .setTicker(String.format("Name: %1$s Booking ID: %2$s Phone: %3$", name, Id, phone));
+        Intent notificationIntent = new Intent(context, MainActivity.class);
+        notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        notificationIntent.setAction(Intent.ACTION_MAIN);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+        notificationBuilder.setContentIntent(pendingIntent);
+        notificationManager.notify(R.id.notification, notificationBuilder.build());
     }
 
     @Override
@@ -65,7 +222,6 @@ public class Main_Navigation extends ActionBarActivity
                 objFragment = new Carry_Fragment();
                 mTitle = "Carry";
                 break;
-
             case 2:
                 objFragment = new History_Fragment();
                 mTitle = "History";
@@ -78,7 +234,6 @@ public class Main_Navigation extends ActionBarActivity
                 objFragment = new Contact_Fragment();
                 mTitle = "Contact";
                 break;
-
         }
         // update the main content by replacing fragments
         android.app.FragmentManager fragmentManager = getFragmentManager();
@@ -207,5 +362,4 @@ public class Main_Navigation extends ActionBarActivity
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
-
 }

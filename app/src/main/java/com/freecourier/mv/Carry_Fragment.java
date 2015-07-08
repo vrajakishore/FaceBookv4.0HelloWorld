@@ -81,11 +81,11 @@ public class Carry_Fragment extends Fragment {
         }
 
 
-        AlertDialog dialog = new SpotsDialog(getActivity());
-        dialog.show();
+
+
         RetrieveFeedTask obj = new RetrieveFeedTask();
         obj.execute();
-        dialog.dismiss();
+
 
         Button btnSearch = (Button) rootview.findViewById(R.id.button);
         btnSearch.setOnClickListener(new View.OnClickListener() {
@@ -160,6 +160,13 @@ public class Carry_Fragment extends Fragment {
     class RetrieveFeedTask2 extends AsyncTask<String, Void, String> {
 
         private Exception exception;
+        AlertDialog dialog = new SpotsDialog(getActivity());
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
+        }
 
         @Override
         protected String doInBackground(String[] args) {
@@ -202,6 +209,7 @@ public class Carry_Fragment extends Fragment {
         protected void onPostExecute(String result) {
             // TODO: check this.exception
             // TODO: do something with the feed
+            dialog.dismiss();
             try {
                 JSONArray json = new JSONArray(result);
 
@@ -224,6 +232,14 @@ public class Carry_Fragment extends Fragment {
 
         private Exception exception;
         private ArrayList<String> cities;
+
+        AlertDialog dialog = new SpotsDialog(getActivity());
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
+        }
 
         public RetrieveFeedTask() {
             cities = new ArrayList<String>();
@@ -251,6 +267,7 @@ public class Carry_Fragment extends Fragment {
             // TODO: check this.exception
             // TODO: do something with the feed
 
+            dialog.dismiss();
             try {
                 JSONArray json = new JSONArray(result);
 

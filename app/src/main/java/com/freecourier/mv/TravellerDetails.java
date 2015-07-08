@@ -102,12 +102,8 @@ public class TravellerDetails extends ActionBarActivity {
     }
 
     public void booking(View v){
-
-        AlertDialog dialog = new SpotsDialog(TravellerDetails.this);
-        dialog.show();
         RetrieveFeedTask2 obj1 = new RetrieveFeedTask2();
         obj1.execute();
-        dialog.dismiss();
     }
 
 
@@ -119,6 +115,14 @@ public class TravellerDetails extends ActionBarActivity {
 
         public RetrieveFeedTask() {
             traveller = new ArrayList<String>();
+        }
+
+        AlertDialog dialog = new SpotsDialog(TravellerDetails.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
         }
 
         @Override
@@ -145,6 +149,7 @@ public class TravellerDetails extends ActionBarActivity {
         protected void onPostExecute(String result) {
             // TODO: check this.exception
             // TODO: do something with the feed
+            dialog.dismiss();
             try {
                 JSONArray json = new JSONArray( result);
 
@@ -187,11 +192,18 @@ public class TravellerDetails extends ActionBarActivity {
 
     class RetrieveFeedTask2 extends AsyncTask<String, Void, String> {
 
+        AlertDialog dialog = new SpotsDialog(TravellerDetails.this);
         private Exception exception;
         private ArrayList<String> travellerDetails;
 
         public RetrieveFeedTask2() {
             travellerDetails = new ArrayList<String>();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
         }
 
         @Override
@@ -235,6 +247,7 @@ public class TravellerDetails extends ActionBarActivity {
         protected void onPostExecute(String result) {
             // TODO: check this.exception
             // TODO: do something with the feed
+            dialog.dismiss();
             try {
                 JSONArray json = new JSONArray(result);
 

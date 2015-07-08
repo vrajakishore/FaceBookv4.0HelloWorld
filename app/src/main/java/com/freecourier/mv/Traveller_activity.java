@@ -41,6 +41,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import dmax.dialog.SpotsDialog;
+
 import static com.freecourier.mv.Declaration.Constant.FIRST_COLUMN;
 import static com.freecourier.mv.Declaration.Constant.FOURTH_COLUMN;
 import static com.freecourier.mv.Declaration.Constant.SECOND_COLUMN;
@@ -116,8 +118,13 @@ public class Traveller_activity extends ActionBarActivity {
 
 
     class RetrieveFeedTask extends AsyncTask<String, Void, String> {
+        AlertDialog dialog = new SpotsDialog(Traveller_activity.this);
 
-
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
+        }
 
         private Exception exception;
         //private ArrayList<HashMap<String, String>> list;
@@ -152,7 +159,7 @@ public class Traveller_activity extends ActionBarActivity {
         protected void onPostExecute(String result) {
             // TODO: check this.exception
             // TODO: do something with the feed
-
+            dialog.dismiss();
             try {
                 JSONArray json = new JSONArray(result);
 

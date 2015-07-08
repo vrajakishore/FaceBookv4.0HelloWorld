@@ -75,13 +75,10 @@ public class Send_Fragment extends Fragment {
                     "You don't have internet connection.", false);
         }
 
-        AlertDialog dialog = new SpotsDialog(getActivity());
-        dialog.show();
-
         RetrieveFeedTask obj = new RetrieveFeedTask();
         obj.execute();
 
-        dialog.dismiss();
+
 
         Button btnSearch = (Button) rootview.findViewById(R.id.button);
         btnSearch.setOnClickListener(new View.OnClickListener() {
@@ -117,11 +114,8 @@ public class Send_Fragment extends Fragment {
                 fragment.setArguments(bundle);
 
          */
-                AlertDialog dialog = new SpotsDialog(getActivity());
-                dialog.show();
-                new RetrieveFeedTask2().execute(args);
 
-                dialog.dismiss();
+                new RetrieveFeedTask2().execute(args);
 
                 Bundle bundle = new Bundle();
                 bundle.putString("src",args[0]);
@@ -159,6 +153,13 @@ public class Send_Fragment extends Fragment {
     class RetrieveFeedTask2 extends AsyncTask<String, Void, String> {
 
         private Exception exception;
+        AlertDialog dialog = new SpotsDialog(getActivity());
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
+        }
 
         @Override
         protected String doInBackground(String[] args) {
@@ -185,6 +186,7 @@ public class Send_Fragment extends Fragment {
         protected void onPostExecute(String result) {
             // TODO: check this.exception
             // TODO: do something with the feed
+            dialog.dismiss();
             try {
                 JSONArray json = new JSONArray(result);
 
@@ -207,12 +209,18 @@ public class Send_Fragment extends Fragment {
     }
 
     class RetrieveFeedTask extends AsyncTask<String, Void, String> {
-
+        AlertDialog dialog = new SpotsDialog(getActivity());
         private Exception exception;
         private ArrayList<String> cities;
 
         public RetrieveFeedTask() {
             cities = new ArrayList<String>();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
         }
 
         @Override
@@ -237,7 +245,7 @@ public class Send_Fragment extends Fragment {
         protected void onPostExecute(String result) {
             // TODO: check this.exception
             // TODO: do something with the feed
-
+            dialog.dismiss();
             try {
                 JSONArray json = new JSONArray(result);
 

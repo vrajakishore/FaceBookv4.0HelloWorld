@@ -88,8 +88,7 @@ public class Registration extends Fragment {
 
 
                 int flag;
-                AlertDialog dialog = new SpotsDialog(getActivity());
-                dialog.show();
+
                 email = (EditText) rootview.findViewById(R.id.username);
                 name = (EditText) rootview.findViewById(R.id.name);
                 pass = (EditText) rootview.findViewById(R.id.password);
@@ -147,8 +146,6 @@ public class Registration extends Fragment {
                     vobj.execute();
                 }
 
-                dialog.dismiss();
-
             }
         });
 
@@ -159,6 +156,13 @@ public class Registration extends Fragment {
     class Verification extends AsyncTask<String, Void, String> {
 
         private Exception exception;
+        AlertDialog dialog = new SpotsDialog(getActivity());
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
+        }
 
         @Override
         protected String doInBackground(String[] args) {
@@ -191,6 +195,7 @@ public class Registration extends Fragment {
         protected void onPostExecute(String result) {
             // TODO: check this.exception
             // TODO: do something with the feed
+            dialog.dismiss();
             try {
                 JSONArray json = new JSONArray( result);
 

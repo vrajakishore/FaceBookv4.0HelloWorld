@@ -160,8 +160,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void send_to_menu(View view) {
-        AlertDialog dialog = new SpotsDialog(MainActivity.this);
-        dialog.show();
+
+       // dialog.show();
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
         String[] args = new String[2];
@@ -182,7 +182,7 @@ public class MainActivity extends ActionBarActivity {
             new RetrieveFeedTask().execute(args);
 
         }
-        dialog.dismiss();
+        //dialog.dismiss();
     }
 
     public final static boolean isValidEmail(CharSequence target) {
@@ -231,6 +231,13 @@ public class MainActivity extends ActionBarActivity {
     class RetrieveFeedTask extends AsyncTask<String, Void, String> {
 
         private Exception exception;
+        AlertDialog dialog = new SpotsDialog(MainActivity.this);
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
+        }
+
 
         @Override
         protected String doInBackground(String[] args) {
@@ -257,6 +264,7 @@ public class MainActivity extends ActionBarActivity {
         protected void onPostExecute(String result) {
             // TODO: check this.exception
             // TODO: do something with the feed
+            dialog.dismiss();
             try {
                 JSONArray json = new JSONArray(result);
                 //Log.d("error out", "in onPostExecute results123 : " + result);

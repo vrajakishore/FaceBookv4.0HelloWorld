@@ -81,11 +81,11 @@ public class History_Fragment extends Fragment {
             showAlertDialog(getActivity(), "No Internet Connection",
                     "You don't have internet connection.", false);
         }
-        AlertDialog dialog = new SpotsDialog(getActivity());
-        dialog.show();
+
+
         RetrieveFeedTask2 obj1 = new RetrieveFeedTask2();
         obj1.execute();
-        dialog.dismiss();
+
 
         return rootview;
 
@@ -94,10 +94,16 @@ public class History_Fragment extends Fragment {
     }
 
     class RetrieveFeedTask2 extends AsyncTask<String, Void, String> {
-
+        AlertDialog dialog = new SpotsDialog(getActivity());
         private Exception exception;
         public RetrieveFeedTask2() {
             list=new ArrayList<HashMap<String,String>>();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
         }
 
         @Override
@@ -140,6 +146,7 @@ public class History_Fragment extends Fragment {
         protected void onPostExecute(String result) {
             // TODO: check this.exception
             // TODO: do something with the feed
+            dialog.dismiss();
             try {
                 JSONArray json = new JSONArray(result);
                 Log.d("error out", "in onPostExecute results123 : " + result);

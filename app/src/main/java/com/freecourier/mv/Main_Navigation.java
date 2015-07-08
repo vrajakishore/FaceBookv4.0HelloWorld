@@ -46,6 +46,8 @@ public class Main_Navigation extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     private static final String TAG = "MAIN NAVIGATION PAGE";
+    private static final String FM_NOTIFICATION_ID = "1234";
+
     UserSessionManager session;
     Context context;
     private ArrayList<HashMap<String, String>> list;
@@ -153,7 +155,7 @@ public class Main_Navigation extends ActionBarActivity
                     String val = jsonobj.getString(key);
                     JSONArray json1 = new JSONArray("["+val+"]");
                     JSONObject jsonobj1 = json1.getJSONObject(0);
-                    String[] args = new String[3];
+                    String[] args = new String[6];
                     val = jsonobj1.getString("booking_id");
                     temp.put("booking_id",val);
                     args[0] = temp.get("booking_id");
@@ -166,19 +168,35 @@ public class Main_Navigation extends ActionBarActivity
                     temp.put("sender_phone",val);
                     args[2] = temp.get("sender_phone");
 
+                    val = jsonobj1.getString("source");
+                    temp.put("source",val);
+                    args[3] = temp.get("source");
+
+                    val = jsonobj1.getString("destination");
+                    temp.put("destination",val);
+                    args[4] = temp.get("destination");
+
+                    val = jsonobj1.getString("date");
+                    temp.put("date",val);
+                    args[5] = temp.get("date");
+
                     list.add(temp);
 
-                    Log.d("error out - Element : ", "i + " + i + args[0]+args[1]+args[2]);
+                    Log.d("error out - Element : ", "i + " + i + args[0] + args[1] + args[2] + args[3] + args[4] + args[5]);
 
-
+/*
                     AlertDialog.Builder builder = new AlertDialog.Builder(Main_Navigation.this);
-                    builder.setMessage(args[1]+" selected you to carry his parcel \nBooking ID: "+args[0]+"\n Phone No: "+args[2]);
+                    builder.setMessage(args[1] + " selected you to carry his parcel \nBooking ID: " + args[0] + "\n Phone No: " + args[2]);
                     builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
                         }
                     });
                     builder.create().show();
+
+*/
+
+                    addNotification(args[0],args[1],args[2],args[3],args[4],args[5]);
                     //createNotification(args[0],args[1],args[2]);
                 }
 
@@ -189,23 +207,44 @@ public class Main_Navigation extends ActionBarActivity
         }
     }
 
-    private void createNotification(String Id, String name, String phone) {
+    private void addNotification(String Id, String name, String phone, String source, String destination, String date) {
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context);
-        notificationBuilder.setAutoCancel(true).setDefaults(Notification.DEFAULT_ALL);
-        notificationBuilder
-                .setContentText(Id)
-                .setContentTitle(String.format("Someone selected you!!"))
-                .setSmallIcon(R.drawable.ic_stat_action_room)
-                .setColor(Color.argb(0x55, 0x00, 0x00, 0xff))
-                .setTicker(String.format("Name: %1$s Booking ID: %2$s Phone: %3$", name, Id, phone));
-        Intent notificationIntent = new Intent(context, MainActivity.class);
-        notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        notificationIntent.setAction(Intent.ACTION_MAIN);
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
-        notificationBuilder.setContentIntent(pendingIntent);
-        notificationManager.notify(R.id.notification, notificationBuilder.build());
+
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.mipmap.notification1)
+                        .setContentTitle("Hola!!!!!")
+                        .setContentText("Someone selected you ");
+
+        NotificationCompat.InboxStyle inboxStyle =
+                new NotificationCompat.InboxStyle();
+        inboxStyle.setBigContentTitle("Traveller details:");
+
+        inboxStyle.addLine("Booking Id : " + Id);
+        inboxStyle.addLine("Name : " + name);
+        inboxStyle.addLine("Phone : "+phone);
+        inboxStyle.addLine("Source : "+source);
+        inboxStyle.addLine("Destination : "+destination);
+        inboxStyle.addLine("Date : "+date);
+
+
+        builder.setStyle(inboxStyle);
+
+        Intent notificationIntent = new Intent(this, Main_Navigation.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(contentIntent);
+
+        // Add as notification
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(Integer.parseInt(FM_NOTIFICATION_ID), builder.build());
+    }
+
+    // Remove notification
+    private void removeNotification() {
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.cancel(Integer.parseInt(FM_NOTIFICATION_ID));
     }
 
     @Override

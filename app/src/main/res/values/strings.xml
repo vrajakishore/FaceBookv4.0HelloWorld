@@ -31,7 +31,8 @@
 
     <string name="title_section3">History</string>
     <string name="title_section4">Share Free Courier</string>
-    <string name="title_section5">Contact Us</string>
+    <string name="title_section5">My Notifications</string>
+    <string name="title_section6">Contact Us</string>
 
 
 
@@ -71,6 +72,7 @@
     <string name="travellerDetails_title">TRAVELLER DETAILS</string>
     <string name="ttd_select">Select</string>
     <string name="title_activity_history">History</string>
+    <string name="title_activity_splash_screen">SplashScreenActivity</string>
 
 
     <!--    <string name="com_facebook_loginview_log_in_button_long">Login</string>

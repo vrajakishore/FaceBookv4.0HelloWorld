@@ -7,56 +7,56 @@
         android:id="@+id/booking"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="2dp"
+        android:padding="1.5dp"
         android:paddingLeft="2dp"
-        android:layout_weight="2.5"
+        android:layout_weight="2.2"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/hname"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="2dp"
-        android:layout_weight="1" />
+        android:padding="1.5dp"
+        android:layout_weight="1.4" />
 
     <TextView
         android:id="@+id/hphone"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="2dp"
-        android:layout_weight="1" />
+        android:padding="1.5dp"
+        android:layout_weight="1.4" />
     <TextView
         android:id="@+id/hmail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="2dp"
-        android:layout_weight="1" />
+        android:padding="1.5dp"
+        android:layout_weight="1.4" />
 
     <TextView
         android:id="@+id/hsource"
         android:layout_width="0dp"
         android:paddingLeft="2dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="1.8" />
 
     <TextView
         android:id="@+id/hdestination"
         android:layout_width="0dp"
-        android:paddingLeft="2dp"
+        android:paddingLeft="2.5dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="1.5" />
 
     <TextView
         android:id="@+id/hdate"
         android:layout_width="0dp"
-        android:padding="2dp"
+        android:padding="1.5dp"
         android:layout_height="wrap_content"
         android:layout_weight="1.5" />
 
     <TextView
         android:id="@+id/hstatus"
         android:layout_width="0dp"
-        android:padding="2dp"
+        android:padding="1.5dp"
         android:layout_height="wrap_content"
         android:layout_weight="1.5" />
 

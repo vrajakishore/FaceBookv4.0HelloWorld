@@ -9,6 +9,7 @@
         <item name="android:windowBackground">@android:color/white</item>
 
 
+
     </style>
 
     <style name="menu_labels_style" parent="AppTheme">

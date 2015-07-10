@@ -295,8 +295,6 @@ public class TravellerDetails extends ActionBarActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
         }
 
 

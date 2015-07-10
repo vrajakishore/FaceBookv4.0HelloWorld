@@ -1,28 +1,23 @@
 package com.freecourier.mv;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
-import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
-import android.widget.Toast;
 
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
@@ -85,12 +80,12 @@ public class Main_Navigation extends ActionBarActivity
 
     private class MyTimerTask extends TimerTask {
         public void run() {
-            if(!running){
+            if (!running) {
                 Log.i("TAG", "NEW TIMER STARTED.");
                 RetrieveServerRequest task = new RetrieveServerRequest();
                 task.execute();
                 running = true;
-            }else{
+            } else {
                 running = false;
             }
         }
@@ -101,19 +96,19 @@ public class Main_Navigation extends ActionBarActivity
         private Exception exception;
         //private ArrayList<String> senderNotification;
 
-       // public RetrieveServerRequest() {
-            //senderNotification = new ArrayList<String>();
-       // }
-       public RetrieveServerRequest() {
-           list=new ArrayList<HashMap<String,String>>();
-       }
+        // public RetrieveServerRequest() {
+        //senderNotification = new ArrayList<String>();
+        // }
+        public RetrieveServerRequest() {
+            list = new ArrayList<HashMap<String, String>>();
+        }
 
         @Override
         protected String doInBackground(String[] args) {
 
             session = new UserSessionManager(getApplicationContext());
 
-            if(session.checkLogin())
+            if (session.checkLogin())
                 finish();
 
             // get user data from session
@@ -126,10 +121,10 @@ public class Main_Navigation extends ActionBarActivity
             String email = user.get(UserSessionManager.KEY_EMAIL);
 
 
-            Log.d(TAG, "session = " +name+" "+email);
+            Log.d(TAG, "session = " + name + " " + email);
 
             DefaultHttpClient client = new DefaultHttpClient();
-            String url = "http://freecourierservice.appspot.com/rest/user/get_booking_notification/"+email;
+            String url = "http://freecourierservice.appspot.com/rest/user/get_booking_notification/" + email;
             HttpGet request = new HttpGet(url);
             String responseStr = "";
             try {
@@ -150,34 +145,34 @@ public class Main_Navigation extends ActionBarActivity
 
                 JSONObject jsonobj = json.getJSONObject(0);
                 for (int i = 0; i < jsonobj.names().length(); i++) {
-                    HashMap<String,String> temp = new HashMap<String, String>();
+                    HashMap<String, String> temp = new HashMap<String, String>();
                     String key = (String) jsonobj.names().get(i);
                     String val = jsonobj.getString(key);
-                    JSONArray json1 = new JSONArray("["+val+"]");
+                    JSONArray json1 = new JSONArray("[" + val + "]");
                     JSONObject jsonobj1 = json1.getJSONObject(0);
                     String[] args = new String[6];
                     val = jsonobj1.getString("booking_id");
-                    temp.put("booking_id",val);
+                    temp.put("booking_id", val);
                     args[0] = temp.get("booking_id");
 
                     val = jsonobj1.getString("sender_name");
-                    temp.put("sender_name",val);
+                    temp.put("sender_name", val);
                     args[1] = temp.get("sender_name");
 
                     val = jsonobj1.getString("sender_phone");
-                    temp.put("sender_phone",val);
+                    temp.put("sender_phone", val);
                     args[2] = temp.get("sender_phone");
 
                     val = jsonobj1.getString("source");
-                    temp.put("source",val);
+                    temp.put("source", val);
                     args[3] = temp.get("source");
 
                     val = jsonobj1.getString("destination");
-                    temp.put("destination",val);
+                    temp.put("destination", val);
                     args[4] = temp.get("destination");
 
                     val = jsonobj1.getString("date");
-                    temp.put("date",val);
+                    temp.put("date", val);
                     args[5] = temp.get("date");
 
                     list.add(temp);
@@ -196,7 +191,7 @@ public class Main_Navigation extends ActionBarActivity
 
 */
 
-                    addNotification(args[0],args[1],args[2],args[3],args[4],args[5]);
+                    addNotification(args[0], args[1], args[2], args[3], args[4], args[5]);
                     //createNotification(args[0],args[1],args[2]);
                 }
 
@@ -208,7 +203,6 @@ public class Main_Navigation extends ActionBarActivity
     }
 
     private void addNotification(String Id, String name, String phone, String source, String destination, String date) {
-
 
 
         NotificationCompat.Builder builder =
@@ -223,10 +217,10 @@ public class Main_Navigation extends ActionBarActivity
 
         inboxStyle.addLine("Booking Id : " + Id);
         inboxStyle.addLine("Name : " + name);
-        inboxStyle.addLine("Phone : "+phone);
-        inboxStyle.addLine("Source : "+source);
-        inboxStyle.addLine("Destination : "+destination);
-        inboxStyle.addLine("Date : "+date);
+        inboxStyle.addLine("Phone : " + phone);
+        inboxStyle.addLine("Source : " + source);
+        inboxStyle.addLine("Destination : " + destination);
+        inboxStyle.addLine("Date : " + date);
 
 
         builder.setStyle(inboxStyle);
@@ -270,6 +264,10 @@ public class Main_Navigation extends ActionBarActivity
                 mTitle = "Share";
                 break;
             case 4:
+                objFragment = new MyNotifications();
+                mTitle = "My Notifications";
+                break;
+            case 5:
                 objFragment = new Contact_Fragment();
                 mTitle = "Contact";
                 break;
@@ -299,7 +297,9 @@ public class Main_Navigation extends ActionBarActivity
             case 5:
                 mTitle = getString(R.string.title_section5);
                 break;
-
+            case 6:
+                mTitle = getString(R.string.title_section6);
+                break;
         }
     }
 
@@ -332,7 +332,7 @@ public class Main_Navigation extends ActionBarActivity
         int id = item.getItemId();
 
         session = new UserSessionManager(getApplicationContext());
-        if(session.checkLogin())
+        if (session.checkLogin())
             finish();
 
         // get user data from session
@@ -346,9 +346,9 @@ public class Main_Navigation extends ActionBarActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
 
-            if(email!=null){
-                session.logoutUser();}
-            else {
+            if (email != null) {
+                session.logoutUser();
+            } else {
                 Profile profile = Profile.getCurrentProfile();
                 if (profile.getName() != null) {
                     LoginManager.getInstance().logOut();
